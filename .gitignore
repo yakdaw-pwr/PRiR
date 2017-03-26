@@ -31,3 +31,5 @@
 # Debug files
 *.dSYM/
 *.su
+/Lista2/Z1/gaussZ1/dist/
+/Lista2/Z1/gaussZ1/build/
