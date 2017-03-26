@@ -6,16 +6,16 @@
 #include "displayFunctions.h"
 #include "mathFunctions.h"
 
-double* CalculateGJ(double** matrix, int rowCount){
+double* calculateGJ(double** matrix, int rowCount){
   double* solutionMatrix = (double*) calloc(rowCount, sizeof(double)); 
   
   for(int i = 0; i < rowCount; i++){
     if(matrix[i][i] == 0){
-	int newRow = FindNonZeroElement(matrix, rowCount, i);
-	SwitchRows(matrix[i], matrix[newRow], rowCount+1);
+	int newRow = findNonZeroElement(matrix, rowCount, i);
+	switchRows(matrix[i], matrix[newRow], rowCount+1);
     }
-    DivideRowBy(matrix[i], matrix[i][i], rowCount+1);
-    SubRows(matrix, i, rowCount);
+    divideRowBy(matrix[i], matrix[i][i], rowCount+1);
+    subRows(matrix, i, rowCount);
   }
   
   for(int i = 0; i< rowCount; i++){
@@ -24,7 +24,7 @@ double* CalculateGJ(double** matrix, int rowCount){
   return solutionMatrix;
 }
 
-void ReleaseMemory(double** matrix, double* solution, int rowCount){
+void releaseMemory(double** matrix, double* solution, int rowCount){
  for(int i = 0; i < rowCount; i++){
   free(matrix[i]);
  }
@@ -32,17 +32,18 @@ void ReleaseMemory(double** matrix, double* solution, int rowCount){
  free(solution);
 }
 
-void Calculate(const char* fileName, double** matrix, double* solution, int* rowCount){
- matrix = ReadData(fileName, matrix, rowCount);
- solution = CalculateGJ(matrix, *rowCount);
- PrintFinalMatrix(matrix,*rowCount);
- ReleaseMemory(matrix, solution, *rowCount);
+void calculate(const char* fileName, double** matrix, double* solution){ 
+ int rowCount = 0;
+
+ matrix = loadMatrix(fileName, matrix, &rowCount);
+ solution = calculateGJ(matrix, rowCount);
+ printFinalMatrix(matrix,rowCount);
+ releaseMemory(matrix, solution, rowCount);
 }
 
 int main(){
         //creating two dimensional matrix
 	double** matrix;
-        int rowCount = 0;
 	double* solution;
         
         //starting the time and choosing accuracy
@@ -50,13 +51,13 @@ int main(){
 	
         printf("\nFirst data\n");
         //calculating first data
-	Calculate("dane1", matrix, solution, &rowCount);
+	calculate("dane1", matrix, solution);
        
         //getting the time
 	double firstDataTime = clock() / (CLOCKS_PER_SEC / 1000000);
         
 	printf("\nSecond data\n");
-	Calculate("dane2", matrix, solution, &rowCount);
+	calculate("dane2", matrix, solution);
 	
         printf("\n");
 	double finishTime = clock() / (CLOCKS_PER_SEC / 1000000);

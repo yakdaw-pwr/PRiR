@@ -7,15 +7,17 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-double** ReadData (const char* file_name, double** matrix, int* rowCount){
+double** loadMatrix (const char* file_name, double** matrix, int* rowCount){
   FILE* file = fopen (file_name, "r");
   int i = 0;
-  int index = 0;
-  int index2 = 0;
+  int indexColumn = 0;
+  int indexRow = 0;
   double readdouble = 0;
+  
+  //scan number of rows/columns which is provided at the beginning
   fscanf (file, "%d", &i);    
   *rowCount = i;
-  //matrix = (int*)calloc(i*(i+1), sizeof(int));
+
   matrix = (double**)calloc(*rowCount, sizeof(double*));
 
   for(int j = 0; j < *rowCount; j++){
@@ -25,12 +27,12 @@ double** ReadData (const char* file_name, double** matrix, int* rowCount){
 //printf("Row cout: %d", *rowCount);
   while (!feof (file)){       
       fscanf (file, "%lf", &readdouble);
-      matrix[index][index2] = readdouble;
-      index2++;      
-      if(index2 > (*rowCount)){
-        index2=0;
-        index++;
-        if(index > *rowCount-1)
+      matrix[indexColumn][indexRow] = readdouble;
+      indexRow++;      
+      if(indexRow > (*rowCount)){
+        indexRow=0;
+        indexColumn++;
+        if(indexColumn > *rowCount-1)
 	  break;
       }
     }
