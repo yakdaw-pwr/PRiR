@@ -7,8 +7,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-double** ReadData (const char* file_name, double** matrix, int* rowCount)
-{
+double** ReadData (const char* file_name, double** matrix, int* rowCount){
   FILE* file = fopen (file_name, "r");
   int i = 0;
   int index = 0;
@@ -18,20 +17,17 @@ double** ReadData (const char* file_name, double** matrix, int* rowCount)
   *rowCount = i;
   //matrix = (int*)calloc(i*(i+1), sizeof(int));
   matrix = (double**)calloc(*rowCount, sizeof(double*));
-  int j = 0;
-  for(j = 0; j < *rowCount; j++)
-  {
+
+  for(int j = 0; j < *rowCount; j++){
     matrix[j] = (double*)calloc((*rowCount)+1, sizeof(double));
   }
   
 //printf("Row cout: %d", *rowCount);
-  while (!feof (file))
-    {       
+  while (!feof (file)){       
       fscanf (file, "%lf", &readdouble);
       matrix[index][index2] = readdouble;
       index2++;      
-      if(index2 > (*rowCount))
-      {
+      if(index2 > (*rowCount)){
         index2=0;
         index++;
         if(index > *rowCount-1)

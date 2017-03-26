@@ -8,39 +8,27 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-void PrintMatrix(double** matrix, int rowCount)
-{
-  int i;
-  for(i = 0; i < rowCount; i++)
-  {
-    int j;
-    for(j = 0; j < rowCount+1; j++)
-    {
+void PrintMatrix(double** matrix, int rowCount){
+  for(int i = 0; i < rowCount; i++){
+    for(int j = 0; j < rowCount+1; j++){
       printf("%.2f ", matrix[i][j]);     
     }
     printf("\n");
   }
 }
 
-void PrintSolution(double* x, int rowCount)
-{
- int i;
- for(i = 0; i < rowCount; i++)
- {
+void PrintSolution(double* x, int rowCount){
+ for(int i = 0; i < rowCount; i++){
    printf("x%d: %.2lf\n", i, x[i]);
  }
 }
 
-void PrintFinalMatrix(double** matrix, int rowCount)
-{
-int i;
+void PrintFinalMatrix(double** matrix, int rowCount){
  printf("Liczba rownan: %d\n", rowCount);
- for(i = 0; i < rowCount; i++)
- {
-   int j;
-   printf("Wiersz %d:\n", i);
-   for(j = 0; j < rowCount+1 ; j++)
-   {
+ for(int i = 0; i < rowCount; i++){
+   
+     printf("Wiersz %d:\n", i);
+   for(int j = 0; j < rowCount+1 ; j++){
 	printf("%.2lf ", matrix[i][j]);
    }
    printf("\n");
