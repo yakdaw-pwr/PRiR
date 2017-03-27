@@ -78,3 +78,26 @@ int main() {
     }
     return (0);
 }
+
+//------------------------------------>
+
+//java generator
+//        
+//
+//import java.lang.Math; // headers MUST be above the first class
+//import java.util.concurrent.ThreadLocalRandom;
+//
+//// one class needs to have a main() method
+//public class HelloWorld
+//{
+//  // arguments are passed using the text field below this editor
+//  public static void main(String[] args)
+//  {
+//    	int minimum = 0;
+//    	int maximum = 400;
+//    for(int i = 0; i<10; i++){
+//    	int randomNum = minimum + (int)(Math.random() * maximum); 
+//		System.out.print(String.valueOf(randomNum) + "\t" );
+//    }
+//  }
+//}
