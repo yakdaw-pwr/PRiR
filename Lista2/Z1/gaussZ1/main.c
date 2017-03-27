@@ -30,6 +30,10 @@ void calcNormall(double* firstTime, double* secondTime, double* completeTime) {
             (firstDataTime - timeStart) / 1000000,
             (finishTime - firstDataTime) / 1000000,
             (finishTime - timeStart) / 1000000);
+    
+    firstTime += (firstDataTime - timeStart / 1000000);
+    secondTime += (finishTime - firstDataTime / 1000000);
+    completeTime += (finishTime - timeStart) / 1000000);
 }
 
 void calcParallel() {
@@ -71,37 +75,16 @@ printf("First data time: %.6lf\n"
 int main() {
     
         double firstTime, secondTime, completeTime;
+        int loopNumber = 10;
 
-    for(int i = 0; i<10; i++){
+    for(int i = 0; i < loopNumber; i++){
 
     if (parallel == 0) {
         calcNormall(&firstTime, &secondTime, &completeTime);
     } else {
         calcParallel();
     }
+    
     }
     return (0);
 }
-
-//------------------------------------>
-
-//java generator
-//        
-//
-//import java.lang.Math; // headers MUST be above the first class
-//import java.util.concurrent.ThreadLocalRandom;
-//
-//// one class needs to have a main() method
-//public class HelloWorld
-//{
-//  // arguments are passed using the text field below this editor
-//  public static void main(String[] args)
-//  {
-//    	int minimum = 0;
-//    	int maximum = 400;
-//    for(int i = 0; i<10; i++){
-//    	int randomNum = minimum + (int)(Math.random() * maximum); 
-//		System.out.print(String.valueOf(randomNum) + "\t" );
-//    }
-//  }
-//}
