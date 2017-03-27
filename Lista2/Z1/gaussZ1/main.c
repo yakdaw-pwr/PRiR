@@ -10,7 +10,7 @@
 
 int parallel = 1;
 
-void calcNormall() {
+void calcNormall(double* firstTime, double* secondTime, double* completeTime) {
     //starting the time and choosing accuracy
 
     double timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
@@ -69,10 +69,16 @@ printf("First data time: %.6lf\n"
 } 
 
 int main() {
+    
+        double firstTime, secondTime, completeTime;
+
+    for(int i = 0; i<10; i++){
+
     if (parallel == 0) {
-        calcNormall();
+        calcNormall(&firstTime, &secondTime, &completeTime);
     } else {
         calcParallel();
+    }
     }
     return (0);
 }
