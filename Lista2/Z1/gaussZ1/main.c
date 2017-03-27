@@ -8,9 +8,9 @@
 #include<time.h>
 #include "GJ.h"
 
-int parallel = 1;
+int parallel = 0;
 
-void calcNormall(double firstTime, double secondTime, double completeTime) {
+void calcNormall(double* firstTime, double* secondTime, double* completeTime) {
     //starting the time and choosing accuracy
 
     double timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
@@ -20,7 +20,7 @@ void calcNormall(double firstTime, double secondTime, double completeTime) {
     //getting the time
     double firstDataTime = clock() / (CLOCKS_PER_SEC / 1000000);
 
-    calculate("dane2");
+    calculate("dane3");
 
     double finishTime = clock() / (CLOCKS_PER_SEC / 1000000);
 
@@ -31,10 +31,9 @@ void calcNormall(double firstTime, double secondTime, double completeTime) {
             (finishTime - firstDataTime) / 1000000,
             (finishTime - timeStart) / 1000000);
 
-    firstTime += (firstDataTime - timeStart) / 1000000;
-    secondTime += (finishTime - firstDataTime) / 1000000;
-    completeTime += (finishTime - timeStart) / 1000000;
-
+    *firstTime += (firstDataTime - timeStart) / 1000000;
+    *secondTime += (finishTime - firstDataTime) / 1000000;
+    *completeTime += (finishTime - timeStart) / 1000000;
 }
 
 void calcParallel() {
@@ -81,11 +80,26 @@ int main() {
     for (int i = 0; i < loopNumber; i++) {
 
         if (parallel == 0) {
-            calcNormall(firstTime, secondTime, completeTime);
+            calcNormall(&firstTime, &secondTime, &completeTime);
         } else {
             calcParallel();
         }
 
+        printf("First data time loop: %.6lf\n"
+            "Second data time loop: %.6lf\n"
+            "Complete time loop: %.6lf\n",
+            firstTime,
+            secondTime,
+            completeTime);
     }
+    
+    printf("Final times:\n"
+            "First data time loop: %.6lf\n"
+            "Second data time loop: %.6lf\n"
+            "Complete time loop: %.6lf\n",
+            firstTime / loopNumber,
+            secondTime / loopNumber,
+            completeTime / loopNumber);
+    
     return (0);
 }
