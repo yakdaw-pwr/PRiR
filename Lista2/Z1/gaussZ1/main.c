@@ -10,7 +10,7 @@
 
 int parallel = 1;
 
-void calcNormall(double* firstTime, double* secondTime, double* completeTime) {
+void calcNormall(double firstTime, double secondTime, double completeTime) {
     //starting the time and choosing accuracy
 
     double timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
@@ -30,61 +30,62 @@ void calcNormall(double* firstTime, double* secondTime, double* completeTime) {
             (firstDataTime - timeStart) / 1000000,
             (finishTime - firstDataTime) / 1000000,
             (finishTime - timeStart) / 1000000);
-    
-    firstTime += (firstDataTime - timeStart / 1000000);
-    secondTime += (finishTime - firstDataTime / 1000000);
-    completeTime += (finishTime - timeStart) / 1000000);
+
+    firstTime += (firstDataTime - timeStart) / 1000000;
+    secondTime += (finishTime - firstDataTime) / 1000000;
+    completeTime += (finishTime - timeStart) / 1000000;
+
 }
 
 void calcParallel() {
     //starting the time and choosing accuracy
     double timeStart, firstDataTime, finishTime;
 
-#pragma omp parallel sections num_threads(2) 
+#pragma omp parallel sections num_threads(2)
     {
-    timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
+        timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
 
-    #pragma omp section 
+#pragma omp section
         {
-        printf("\nFirst data\n");
-        calculate("dane3");
+            printf("\nFirst data\n");
+            calculate("dane3");
 
-        //getting the time
-        firstDataTime = clock() / (CLOCKS_PER_SEC / 1000000);
+            //getting the time
+            firstDataTime = clock() / (CLOCKS_PER_SEC / 1000000);
         }
-    #pragma omp section 
+#pragma omp section
         {
 
-        printf("\nSecond data\n");
-        calculate("dane2");
+            printf("\nSecond data\n");
+            calculate("dane2");
 
-        printf("\n");
-        finishTime = clock() / (CLOCKS_PER_SEC / 1000000);
+            printf("\n");
+            finishTime = clock() / (CLOCKS_PER_SEC / 1000000);
         }
     }
 
 
-printf("First data time: %.6lf\n"
-        "Second data time: %.6lf\n"
-        "Complete time: %.6lf\n",
-        (firstDataTime - timeStart) / 1000000,
-        (finishTime - firstDataTime) / 1000000,
-        (finishTime - timeStart) / 1000000);
-} 
+    printf("First data time: %.6lf\n"
+            "Second data time: %.6lf\n"
+            "Complete time: %.6lf\n",
+            (firstDataTime - timeStart) / 1000000,
+            (finishTime - firstDataTime) / 1000000,
+            (finishTime - timeStart) / 1000000);
+}
 
 int main() {
-    
-        double firstTime, secondTime, completeTime;
-        int loopNumber = 10;
 
-    for(int i = 0; i < loopNumber; i++){
+    double firstTime, secondTime, completeTime;
+    int loopNumber = 10;
 
-    if (parallel == 0) {
-        calcNormall(&firstTime, &secondTime, &completeTime);
-    } else {
-        calcParallel();
-    }
-    
+    for (int i = 0; i < loopNumber; i++) {
+
+        if (parallel == 0) {
+            calcNormall(firstTime, secondTime, completeTime);
+        } else {
+            calcParallel();
+        }
+
     }
     return (0);
 }
