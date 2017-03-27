@@ -14,7 +14,7 @@ double* calculateGJ(double** matrix, int rowCount){
 	int newRow = findNonZeroElement(matrix, rowCount, i);
 	switchRows(matrix[i], matrix[newRow], rowCount+1);
     }
-    divideRowBy(matrix[i], matrix[i][i], rowCount+1);
+    divide(matrix[i], matrix[i][i], rowCount+1);
     subRows(matrix, i, rowCount);
   }
   
@@ -32,7 +32,10 @@ void releaseMemory(double** matrix, double* solution, int rowCount){
  free(solution);
 }
 
-void calculate(const char* fileName, double** matrix, double* solution){ 
+void calculate(const char* fileName){ 
+ //creating two dimensional matrix
+ double** matrix;
+ double* solution;
  int rowCount = 0;
 
  matrix = loadMatrix(fileName, matrix, &rowCount);
@@ -42,22 +45,19 @@ void calculate(const char* fileName, double** matrix, double* solution){
 }
 
 int main(){
-        //creating two dimensional matrix
-	double** matrix;
-	double* solution;
+   
         
         //starting the time and choosing accuracy
 	double timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
 	
         printf("\nFirst data\n");
-        //calculating first data
-	calculate("dane1", matrix, solution);
+	calculate("dane1");
        
         //getting the time
 	double firstDataTime = clock() / (CLOCKS_PER_SEC / 1000000);
         
 	printf("\nSecond data\n");
-	calculate("dane2", matrix, solution);
+	calculate("dane2");
 	
         printf("\n");
 	double finishTime = clock() / (CLOCKS_PER_SEC / 1000000);

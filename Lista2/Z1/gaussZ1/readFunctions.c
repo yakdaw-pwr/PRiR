@@ -24,7 +24,6 @@ double** loadMatrix (const char* file_name, double** matrix, int* rowCount){
     matrix[j] = (double*)calloc((*rowCount)+1, sizeof(double));
   }
   
-//printf("Row cout: %d", *rowCount);
   while (!feof (file)){       
       fscanf (file, "%lf", &readdouble);
       matrix[indexColumn][indexRow] = readdouble;
@@ -32,8 +31,7 @@ double** loadMatrix (const char* file_name, double** matrix, int* rowCount){
       if(indexRow > (*rowCount)){
         indexRow=0;
         indexColumn++;
-        if(indexColumn > *rowCount-1)
-	  break;
+        if(indexColumn > *rowCount-1) break;
       }
     }
   fclose (file);    

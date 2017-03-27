@@ -14,59 +14,59 @@
  * @see Test()
  * @return The test results
  */
-void copyRows(double* baseRow, double* destRow, int size)
+void copy(double* mainRow, double* copyRow, int size)
 {
  for(int i = 0; i < size; i++){
-   destRow[i] = baseRow[i];
+   copyRow[i] = mainRow[i];
  }
 }
 
-void switchRows(double* row1, double* row2, int rowSize) {
- double* calcRow = (double*) calloc(rowSize, sizeof(double)); 
- for(int i = 0; i < rowSize; i++) {
-  calcRow[i] = row1[i];
-  row1[i] = row2[i];
-  row2[i] = calcRow[i];
- }
- free(calcRow);
-}
-
-
-
-void addRows(double* baseRow, double* destRow, int rowSize) {
- for(int i = 0; i < rowSize; i++){
-   destRow[i] += baseRow[i];
- }
-}
-
-int findNonZeroElement(double** matrix, int rowCount, int position){
-  for(int i = position+1; i < rowCount; i++){
-     if(matrix[i][position] != 0){
-       return i;
-     }
-  }
-   printf("Error - Matrix is invalid");
-  return 0;
-}
-
-void divideRowBy(double* row, double value, int rowSize){
+void divide(double* row, double value, int rowSize){
  for(int i = 0; i < rowSize; i++){
    row[i] = row[i] / value;
  }
 }
 
-void subRow(double* baseRow, double* destRow, double multiValue, int rowSize){
+void substract(double* baseRow, double* destRow, double multiValue, int rowSize){
   for(int i = 0; i < rowSize; i++) {
    destRow[i] = destRow[i] - (baseRow[i] / multiValue);
   }
 }
 
-void subRows(double** matrix, int baseRowPosition, int rowCount) {
+void add(double* baseRow, double* destRow, int rowSize) {
+ for(int i = 0; i < rowSize; i++){
+   destRow[i] += baseRow[i];
+ }
+}
+
+
+void switchRows(double* firstRow, double* secondRow, int rowLength) {
+ double* tempMat = (double*) calloc(rowLength, sizeof(double)); 
+ for(int i = 0; i < rowLength; i++) {
+  tempMat[i] = firstRow[i];
+  firstRow[i] = secondRow[i];
+  secondRow[i] = tempMat[i];
+ }
+ free(tempMat);
+}
+
+
+int findNonZeroElement(double** matrix, int rowCount, int pos){
+  for(int i = pos+1; i < rowCount; i++){
+     if(matrix[i][pos] != 0){
+       return i;
+     }
+  }
+   printf("Oops, something went wrong.");
+  return -1;
+}
+
+void subRows(double** matrix, int rowNumber, int rowCount) {
   for(int i = 0; i < rowCount; i++) {
-    if(i != baseRowPosition && matrix[i][baseRowPosition] != 0) {
-	double value = matrix[baseRowPosition][baseRowPosition] 
-        / matrix[i][baseRowPosition]; 
-	subRow(matrix[baseRowPosition], matrix[i], value, rowCount+1);  
+    if(i != rowNumber && matrix[i][rowNumber] != 0) {
+	double value = matrix[rowNumber][rowNumber] 
+        / matrix[i][rowNumber]; 
+	substract(matrix[rowNumber], matrix[i], value, rowCount+1);  
     }
   }
 }
