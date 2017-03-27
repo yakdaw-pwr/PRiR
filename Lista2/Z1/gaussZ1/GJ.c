@@ -15,7 +15,11 @@ double* calculateGJ(double** matrix, int rowCount){
 	int newRow = findNonZeroElement(matrix, rowCount, i);
 	switchRows(matrix[i], matrix[newRow], rowCount+1);
     }
+    //jedynki na srodku
     divide(matrix[i], matrix[i][i], rowCount+1);
+//    printf("Next step\n");
+//    printMatrix(matrix, rowCount);
+//    printf("\n");
     subRows(matrix, i, rowCount);
   }
   

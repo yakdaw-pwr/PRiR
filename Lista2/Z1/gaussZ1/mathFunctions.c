@@ -9,9 +9,9 @@ void copy(double* mainRow, double* copyRow, int size)
  }
 }
 
-void divide(double* row, double value, int rowSize){
+void divide(double* row, double valueOfMiddleElement, int rowSize){
  for(int i = 0; i < rowSize; i++){
-   row[i] = row[i] / value;
+   row[i] = row[i] / valueOfMiddleElement;
  }
 }
 

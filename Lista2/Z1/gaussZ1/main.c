@@ -12,18 +12,16 @@ int parallel = 1;
 
 void calcNormall() {
     //starting the time and choosing accuracy
+
     double timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
 
-    printf("\nFirst data\n");
-    calculate("dane1");
+    calculate("dane3");
 
     //getting the time
     double firstDataTime = clock() / (CLOCKS_PER_SEC / 1000000);
 
-    printf("\nSecond data\n");
     calculate("dane2");
 
-    printf("\n");
     double finishTime = clock() / (CLOCKS_PER_SEC / 1000000);
 
     printf("First data time: %.6lf\n"
@@ -45,7 +43,7 @@ void calcParallel() {
     #pragma omp section 
         {
         printf("\nFirst data\n");
-        calculate("dane1");
+        calculate("dane3");
 
         //getting the time
         firstDataTime = clock() / (CLOCKS_PER_SEC / 1000000);
