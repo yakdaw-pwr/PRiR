@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>GJ.h</itemPath>
       <itemPath>displayFunctions.h</itemPath>
       <itemPath>mathFunctions.h</itemPath>
       <itemPath>readFunctions.h</itemPath>
@@ -17,6 +18,7 @@
                    projectFiles="true">
       <itemPath>GJ.c</itemPath>
       <itemPath>displayFunctions.c</itemPath>
+      <itemPath>main.c</itemPath>
       <itemPath>mathFunctions.c</itemPath>
       <itemPath>readFunctions.c</itemPath>
     </logicalFolder>
@@ -47,9 +49,13 @@
       </compileType>
       <item path="GJ.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="GJ.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="displayFunctions.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="displayFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="mathFunctions.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -83,9 +89,13 @@
       </compileType>
       <item path="GJ.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="GJ.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="displayFunctions.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="displayFunctions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="mathFunctions.c" ex="false" tool="0" flavor2="0">
       </item>

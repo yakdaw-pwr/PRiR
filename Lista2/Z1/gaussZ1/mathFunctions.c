@@ -1,19 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 #include "mathFunctions.h"
 #include<stdio.h>
 #include<stdlib.h>
 
-/**
- * A brief description. A more elaborate class description
- * @param bool somebool a boolean argument.
- * @see Test()
- * @return The test results
- */
 void copy(double* mainRow, double* copyRow, int size)
 {
  for(int i = 0; i < size; i++){
@@ -39,7 +27,6 @@ void add(double* baseRow, double* destRow, int rowSize) {
  }
 }
 
-
 void switchRows(double* firstRow, double* secondRow, int rowLength) {
  double* tempMat = (double*) calloc(rowLength, sizeof(double)); 
  for(int i = 0; i < rowLength; i++) {
@@ -61,12 +48,11 @@ int findNonZeroElement(double** matrix, int rowCount, int pos){
   return -1;
 }
 
-void subRows(double** matrix, int rowNumber, int rowCount) {
+void subRows(double** matrix, int rowIndex, int rowCount) {
   for(int i = 0; i < rowCount; i++) {
-    if(i != rowNumber && matrix[i][rowNumber] != 0) {
-	double value = matrix[rowNumber][rowNumber] 
-        / matrix[i][rowNumber]; 
-	substract(matrix[rowNumber], matrix[i], value, rowCount+1);  
+    if(i != rowIndex && matrix[i][rowIndex] != 0) {
+	double value = matrix[rowIndex][rowIndex] / matrix[i][rowIndex]; 
+	substract(matrix[rowIndex], matrix[i], value, rowCount+1);  
     }
   }
 }

@@ -37,6 +37,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/GJ.o \
 	${OBJECTDIR}/displayFunctions.o \
+	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/mathFunctions.o \
 	${OBJECTDIR}/readFunctions.o
 
@@ -74,6 +75,11 @@ ${OBJECTDIR}/displayFunctions.o: displayFunctions.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/displayFunctions.o displayFunctions.c
+
+${OBJECTDIR}/main.o: main.c
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.c
 
 ${OBJECTDIR}/mathFunctions.o: mathFunctions.c
 	${MKDIR} -p ${OBJECTDIR}
