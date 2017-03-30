@@ -8,30 +8,18 @@
 #include<time.h>
 #include "GJ.h"
 
-int parallel = 1;
-int numberOfLoops = 100;
-
 void calcNormall(double* firstTime, double* secondTime, double* completeTime) {
     //starting the time and choosing accuracy
     double timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
 
-    calculate("dane3");
+    calculate("dane1", "dane1out", 0);
 
     //getting the time
     double firstDataTime = clock() / (CLOCKS_PER_SEC / 1000000);
 
-    calculate("dane2");
+    calculate("dane2", "dane2out", 0);
 
     double finishTime = clock() / (CLOCKS_PER_SEC / 1000000);
-
-/*    
-    printf("First data time: %.6lf\n"
-            "Second data time: %.6lf\n"
-            "Complete time: %.6lf\n",
-            (firstDataTime - timeStart) / 1000000,
-            (finishTime - firstDataTime) / 1000000,
-            (finishTime - timeStart) / 1000000);
-*/
 
     *firstTime += (firstDataTime - timeStart) / 1000000;
     *secondTime += (finishTime - firstDataTime) / 1000000;
@@ -48,38 +36,36 @@ void calcParallel(double* firstTime, double* secondTime, double* completeTime) {
 
 #pragma omp section
         {
-            printf("\nFirst data\n");
-            calculate("dane3");
+            calculate("dane1", "dane1out", 0);
 
             //getting the time
             firstDataTime = clock() / (CLOCKS_PER_SEC / 1000000);
         }
 #pragma omp section
         {
-
-            printf("\nSecond data\n");
-            calculate("dane2");
+            calculate("dane2", "dane2out", 0);
 
             printf("\n");
             finishTime = clock() / (CLOCKS_PER_SEC / 1000000);
         }
     }
 
-/*
-    printf("First data time: %.6lf\n"
-            "Second data time: %.6lf\n"
-            "Complete time: %.6lf\n",
-            (firstDataTime - timeStart) / 1000000,
-            (finishTime - firstDataTime) / 1000000,
-            (finishTime - timeStart) / 1000000);
-*/
-    
     *firstTime += (firstDataTime - timeStart) / 1000000;
     *secondTime += (finishTime - firstDataTime) / 1000000;
     *completeTime += (finishTime - timeStart) / 1000000;
 }
 
+void generateAnswerFiles() {
+    calculate("dane1", "dane1out", 1);
+
+    calculate("dane2", "dane2out", 1);
+}
+
 int main() {
+    generateAnswerFiles();
+
+    int parallel = 0;
+    int numberOfLoops = 100;
 
     double firstTime, secondTime, completeTime;
 
@@ -91,7 +77,7 @@ int main() {
             calcParallel(&firstTime, &secondTime, &completeTime);
         }
     }
-    
+
     printf("\nAVERAGE TIMES:\n"
             "First data: %.6lf\n"
             "Second data: %.6lf\n"
@@ -99,6 +85,6 @@ int main() {
             firstTime / numberOfLoops,
             secondTime / numberOfLoops,
             completeTime / numberOfLoops);
-    
+
     return (0);
 }

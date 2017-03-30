@@ -8,6 +8,7 @@ void printSolution(double* x, int rowCount);
 
 void printFinalMatrix(double** matrix, int rowCount);
 
+void saveFinalMatrix(double** matrix, int rowCount, const char* outputFileName);
 
 #endif /* DISPLAYFUNCTIONS_H */
 
