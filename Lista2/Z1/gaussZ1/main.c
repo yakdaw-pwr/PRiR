@@ -9,10 +9,10 @@
 #include "GJ.h"
 
 int parallel = 1;
+int numberOfLoops = 100;
 
-void calcNormall(double firstTime, double secondTime, double completeTime) {
+void calcNormall(double* firstTime, double* secondTime, double* completeTime) {
     //starting the time and choosing accuracy
-
     double timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
 
     calculate("dane3");
@@ -24,20 +24,21 @@ void calcNormall(double firstTime, double secondTime, double completeTime) {
 
     double finishTime = clock() / (CLOCKS_PER_SEC / 1000000);
 
+/*    
     printf("First data time: %.6lf\n"
             "Second data time: %.6lf\n"
             "Complete time: %.6lf\n",
             (firstDataTime - timeStart) / 1000000,
             (finishTime - firstDataTime) / 1000000,
             (finishTime - timeStart) / 1000000);
+*/
 
-    firstTime += (firstDataTime - timeStart) / 1000000;
-    secondTime += (finishTime - firstDataTime) / 1000000;
-    completeTime += (finishTime - timeStart) / 1000000;
-
+    *firstTime += (firstDataTime - timeStart) / 1000000;
+    *secondTime += (finishTime - firstDataTime) / 1000000;
+    *completeTime += (finishTime - timeStart) / 1000000;
 }
 
-void calcParallel() {
+void calcParallel(double* firstTime, double* secondTime, double* completeTime) {
     //starting the time and choosing accuracy
     double timeStart, firstDataTime, finishTime;
 
@@ -64,28 +65,40 @@ void calcParallel() {
         }
     }
 
-
+/*
     printf("First data time: %.6lf\n"
             "Second data time: %.6lf\n"
             "Complete time: %.6lf\n",
             (firstDataTime - timeStart) / 1000000,
             (finishTime - firstDataTime) / 1000000,
             (finishTime - timeStart) / 1000000);
+*/
+    
+    *firstTime += (firstDataTime - timeStart) / 1000000;
+    *secondTime += (finishTime - firstDataTime) / 1000000;
+    *completeTime += (finishTime - timeStart) / 1000000;
 }
 
 int main() {
 
     double firstTime, secondTime, completeTime;
-    int loopNumber = 10;
 
-    for (int i = 0; i < loopNumber; i++) {
+    for (int i = 0; i < numberOfLoops; i++) {
 
         if (parallel == 0) {
-            calcNormall(firstTime, secondTime, completeTime);
+            calcNormall(&firstTime, &secondTime, &completeTime);
         } else {
-            calcParallel();
+            calcParallel(&firstTime, &secondTime, &completeTime);
         }
-
     }
+    
+    printf("\nAVERAGE TIMES:\n"
+            "First data: %.6lf\n"
+            "Second data: %.6lf\n"
+            "Complete time: %.6lf\n",
+            firstTime / numberOfLoops,
+            secondTime / numberOfLoops,
+            completeTime / numberOfLoops);
+    
     return (0);
 }
