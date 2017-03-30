@@ -37,16 +37,17 @@ void releaseMemory(double** matrix, double* solution, int rowCount) {
     free(solution);
 }
 
-void calculate(const char* fileName) {
+void calculate(const char* inputFileName, const char* outputFileName, int saveToFile) {
     //creating two dimensional matrix
     double** matrix;
     double* solution;
     int rowCount = 0;
 
-    matrix = loadMatrix(fileName, matrix, &rowCount);
+    matrix = loadMatrix(inputFileName, matrix, &rowCount);
     solution = calculateGJ(matrix, rowCount);
-    printFinalMatrix(matrix, rowCount);
-    saveFinalMatrix(matrix, rowCount);
+    if (saveToFile == 1) {
+        saveFinalMatrix(matrix, rowCount, outputFileName);
+    }
     releaseMemory(matrix, solution, rowCount);
 }
 
