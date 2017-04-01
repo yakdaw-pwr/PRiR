@@ -51,6 +51,7 @@ void substract(double* baseRow, double* destRow, double multiValue, int rowSize)
 }
 
 void subRows(double** matrix, int rowIndex, int rowCount) {
+#pragma omp parallel for num_threads(10)
     for (int i = 0; i < rowCount; i++) {
         if (i != rowIndex && matrix[i][rowIndex] != 0) {
             double value = matrix[rowIndex][rowIndex] / matrix[i][rowIndex];
