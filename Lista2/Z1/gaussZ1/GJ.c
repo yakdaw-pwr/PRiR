@@ -11,10 +11,6 @@ double* calculateGJ(double** matrix, int rowCount) {
     double* solutionMatrix = (double*) calloc(rowCount, sizeof (double));
 
     for (int i = 0; i < rowCount; i++) {
-        if (matrix[i][i] == 0) {
-            int newRow = findNonZeroElement(matrix, rowCount, i);
-            switchRows(matrix[i], matrix[newRow], rowCount + 1);
-        }
         divide(matrix[i], matrix[i][i], rowCount + 1);
         subRows(matrix, i, rowCount);
     }
