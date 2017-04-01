@@ -64,18 +64,13 @@ void generateAnswerFiles() {
 int main() {
     generateAnswerFiles();
 
-    int parallel = 0;
-    int numberOfLoops = 100;
+    int parallel = 1;
+    int numberOfLoops = 10000;
 
     double firstTime, secondTime, completeTime;
 
     for (int i = 0; i < numberOfLoops; i++) {
-
-        if (parallel == 0) {
-            calcNormall(&firstTime, &secondTime, &completeTime);
-        } else {
-            calcParallel(&firstTime, &secondTime, &completeTime);
-        }
+        calcNormall(&firstTime, &secondTime, &completeTime);
     }
 
     printf("\nAVERAGE TIMES:\n"
