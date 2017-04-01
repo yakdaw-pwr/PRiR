@@ -35,11 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/GJ.o \
-	${OBJECTDIR}/displayFunctions.o \
-	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/mathFunctions.o \
-	${OBJECTDIR}/readFunctions.o
+	${OBJECTDIR}/GJ.o
 
 
 # C Compiler Flags
@@ -70,26 +66,6 @@ ${OBJECTDIR}/GJ.o: GJ.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GJ.o GJ.c
-
-${OBJECTDIR}/displayFunctions.o: displayFunctions.c
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/displayFunctions.o displayFunctions.c
-
-${OBJECTDIR}/main.o: main.c
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.c
-
-${OBJECTDIR}/mathFunctions.o: mathFunctions.c
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mathFunctions.o mathFunctions.c
-
-${OBJECTDIR}/readFunctions.o: readFunctions.c
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/readFunctions.o readFunctions.c
 
 # Subprojects
 .build-subprojects:
