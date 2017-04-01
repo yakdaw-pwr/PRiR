@@ -45,6 +45,7 @@
       <compileType>
         <cTool>
           <standard>3</standard>
+          <commandLine>-fopenmp</commandLine>
         </cTool>
       </compileType>
       <item path="GJ.c" ex="false" tool="0" flavor2="0">
