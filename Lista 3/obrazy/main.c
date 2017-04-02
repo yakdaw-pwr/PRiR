@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
     BMPINFOHEADER PictureInfo;
     
     int i, j;
-    char szary;
+    char** szary;
     short padding;
     Pixel24** pixmap;
     
@@ -108,35 +108,49 @@ int main(int argc, char** argv) {
         fseek(inputFile, FileInfo.dataOffset,SEEK_SET);
         fseek(outputFile, FileInfo.dataOffset, SEEK_SET);
 
+        szary = malloc(sizeof(char*) * PictureInfo.height);
+        for(i = 0; i < PictureInfo.height; i++)
+            szary[i] = (char*)malloc(sizeof(char) * PictureInfo.width);
+        
         // Start timer
         timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
-
         
-    #pragma omp parallel num_threads(1)
-    {
-        // Load bitmap to pixmap
-        #pragma omp for ordered
-        for(i = 0; i < PictureInfo.height; i++) {
-            for(j = 0; j < PictureInfo.width; j++) {   
-                pixmap[i][j].B = fgetc(inputFile); 
-                pixmap[i][j].G = fgetc(inputFile);
-                pixmap[i][j].R = fgetc(inputFile);
+        #pragma omp parallel num_threads(4)
+        {
+            #pragma omp single
+            {
+                for(i = 0; i < PictureInfo.height; i++) {
+                    for(j = 0; j < PictureInfo.width; j++) {           
+                        {
+                            pixmap[i][j].B = fgetc(inputFile); 
+                            pixmap[i][j].G = fgetc(inputFile);
+                            pixmap[i][j].R = fgetc(inputFile);
+                        }   
+                    }
+                    fseek(inputFile, padding, SEEK_CUR);
+                }
             }
-            fseek(inputFile, padding, SEEK_CUR);
-        }
 
-        // Saving bitmap + monochromatic conversion          
-        #pragma omp for ordered        
-        for(i = 0; i < PictureInfo.height; i++) {            
-            for(j = 0; j < PictureInfo.width; j++) {
-                szary = (char)(0.229*pixmap[i][j].R + 0.587*pixmap[i][j].G + 0.114*pixmap[i][j].B);
-                fputc(szary, outputFile);
-                fputc(szary, outputFile);
-                fputc(szary, outputFile);
-            }    
-            fseek(outputFile, padding, SEEK_CUR);
+            #pragma omp for private(i, j) schedule(dynamic, 3)
+            for(i = 0; i < PictureInfo.height; i++) {
+                for(j = 0; j < PictureInfo.width; j++) {  
+                    szary[i][j] = (char)(0.229*pixmap[i][j].R + 0.587*pixmap[i][j].G + 0.114*pixmap[i][j].B);
+                }
+            }
+            
+            #pragma omp single
+            {
+                // Saving bitmap + monochromatic conversion          
+                for(i = 0; i < PictureInfo.height; i++) {         
+                    for(j = 0; j < PictureInfo.width; j++) {
+                        fputc(szary[i][j], outputFile);
+                        fputc(szary[i][j], outputFile);
+                        fputc(szary[i][j], outputFile);
+                    }    
+                    fseek(outputFile, padding, SEEK_CUR);       
+                }
+            } 
         }
-    }
 
         // Stop timer
         timeFinish  = clock() / (CLOCKS_PER_SEC / 1000000);
