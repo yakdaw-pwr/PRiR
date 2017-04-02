@@ -49,8 +49,6 @@ int main(int argc, char** argv) {
     double timeStart;
     double timeFinish;
     double completeTime;
-    int n;
-    int numberOfLoops = 3;
     
     char *fileName = (char*) malloc(128 * sizeof(char));
     char *filePath = (char*) malloc(132 * sizeof(char));
@@ -95,79 +93,70 @@ int main(int argc, char** argv) {
         strcpy(outputName, fileName);
         strcat(outputName, "M.bmp");
             
+        // Operations on new file
+        if(outputFile = fopen(outputName, "wb"))
+        {        
+            // Copying file
+            fseek(inputFile, 0, SEEK_END);
+            j = ftell(inputFile);
+            fseek(inputFile, 0, SEEK_SET);
+            for(i = 0; i < j; i++)
+                fputc(fgetc(inputFile), outputFile);
+         }
+        else printf("Can't create file");
+
+        fseek(inputFile, FileInfo.dataOffset,SEEK_SET);
+        fseek(outputFile, FileInfo.dataOffset, SEEK_SET);
+
+        szary = malloc(sizeof(char*) * PictureInfo.height);
+        for(i = 0; i < PictureInfo.height; i++)
+            szary[i] = (char*)malloc(sizeof(char) * PictureInfo.width);
         
-        for(n = 0; n < numberOfLoops; n++)
+        // Start timer
+        timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
+        
+        #pragma omp parallel num_threads(4)
         {
-            // Operations on new file
-            if(outputFile = fopen(outputName, "wb"))
-            {        
-                // Copying file
-                fseek(inputFile, 0, SEEK_END);
-                j = ftell(inputFile);
-                fseek(inputFile, 0, SEEK_SET);
-                for(i = 0; i < j; i++)
-                    fputc(fgetc(inputFile), outputFile);
-             }
-            else printf("Can't create file");
-
-            fseek(inputFile, FileInfo.dataOffset,SEEK_SET);
-            fseek(outputFile, FileInfo.dataOffset, SEEK_SET);
-
-            szary = malloc(sizeof(char*) * PictureInfo.height);
-            for(i = 0; i < PictureInfo.height; i++)
-                szary[i] = (char*)malloc(sizeof(char) * PictureInfo.width);
-
-            // Start timer
-            timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
-
-            #pragma omp parallel num_threads(4)
+            #pragma omp single
             {
-                #pragma omp single
-                {
-                    for(i = 0; i < PictureInfo.height; i++) {
-                        for(j = 0; j < PictureInfo.width; j++) {           
-                            {
-                                pixmap[i][j].B = fgetc(inputFile); 
-                                pixmap[i][j].G = fgetc(inputFile);
-                                pixmap[i][j].R = fgetc(inputFile);
-                            }   
-                        }
-                        fseek(inputFile, padding, SEEK_CUR);
-                    }
-                }
-
-                #pragma omp for private(i, j) schedule(dynamic, 3)
                 for(i = 0; i < PictureInfo.height; i++) {
-                    for(j = 0; j < PictureInfo.width; j++) {  
-                        szary[i][j] = (char)(0.229*pixmap[i][j].R + 0.587*pixmap[i][j].G + 0.114*pixmap[i][j].B);
+                    for(j = 0; j < PictureInfo.width; j++) {           
+                        {
+                            pixmap[i][j].B = fgetc(inputFile); 
+                            pixmap[i][j].G = fgetc(inputFile);
+                            pixmap[i][j].R = fgetc(inputFile);
+                        }   
                     }
+                    fseek(inputFile, padding, SEEK_CUR);
                 }
-
-                #pragma omp single
-                {
-                    // Saving bitmap + monochromatic conversion          
-                    for(i = 0; i < PictureInfo.height; i++) {         
-                        for(j = 0; j < PictureInfo.width; j++) {
-                            fputc(szary[i][j], outputFile);
-                            fputc(szary[i][j], outputFile);
-                            fputc(szary[i][j], outputFile);
-                        }    
-                        fseek(outputFile, padding, SEEK_CUR);       
-                    }
-                } 
             }
 
-            // Stop timer
-            timeFinish  = clock() / (CLOCKS_PER_SEC / 1000000);
-            completeTime += ((timeFinish - timeStart) / 1000000);
-
-            printf("%d loop time: %.6lf\n", n+1, (timeFinish - timeStart) / 1000000);       
+            #pragma omp for private(i, j) schedule(dynamic, 3)
+            for(i = 0; i < PictureInfo.height; i++) {
+                for(j = 0; j < PictureInfo.width; j++) {  
+                    szary[i][j] = (char)(0.229*pixmap[i][j].R + 0.587*pixmap[i][j].G + 0.114*pixmap[i][j].B);
+                }
+            }
             
-            fclose(outputFile);
-            remove(outputName);
+            #pragma omp single
+            {
+                // Saving bitmap + monochromatic conversion          
+                for(i = 0; i < PictureInfo.height; i++) {         
+                    for(j = 0; j < PictureInfo.width; j++) {
+                        fputc(szary[i][j], outputFile);
+                        fputc(szary[i][j], outputFile);
+                        fputc(szary[i][j], outputFile);
+                    }    
+                    fseek(outputFile, padding, SEEK_CUR);       
+                }
+            } 
         }
-        
-        printf("\nAverage loop time: %.6lf\n", completeTime / numberOfLoops);   
+
+        // Stop timer
+        timeFinish  = clock() / (CLOCKS_PER_SEC / 1000000);
+        completeTime = (timeFinish - timeStart) / 1000000;
+
+        printf("Complete time: %.6lf\n", completeTime);
 
         // Free pixmap memory
         for(i = 0; i<PictureInfo.height; i++)
@@ -176,6 +165,7 @@ int main(int argc, char** argv) {
 
         // Close files
         fclose(inputFile);
+        fclose(outputFile);
     }
     else printf("Error reading file"); 
     
