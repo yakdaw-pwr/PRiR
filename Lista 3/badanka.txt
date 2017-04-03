@@ -182,3 +182,20 @@ Average loop time: 13.167080
 
 
 
+
+yakdaw@yakdaw-ubuntu:~/Desktop/PRiR/PRiR/Lista 3$ ./a.out 
+Insert path to BMP file: ./obrazy/1960
+Picture width: 5184
+Picture height: 3456
+Pixels number: 17915904
+
+Complete time: 3.625933
+yakdaw@yakdaw-ubuntu:~/Desktop/PRiR/PRiR/Lista 3$ ./a.out 
+Insert path to BMP file: ./obrazy/2376
+Picture width: 5184
+Picture height: 3456
+Pixels number: 17915904
+
+Complete time: 3.229741
+
+
