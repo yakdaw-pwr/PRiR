@@ -79,6 +79,10 @@ int main(int argc, char** argv) {
         fread(&PictureInfo.vResolution,4,1,inputFile);
         fread(&PictureInfo.nColors,4,1,inputFile);
         fread(&PictureInfo.nImportantColors,4,1,inputFile);
+
+	printf("Picture width: %d\nPicture height: %d\n",
+		PictureInfo.width, PictureInfo.height);
+        printf("Pixels number: %d\n\n", PictureInfo.width * PictureInfo.height);
           
         // Memory allocation for PixMap
         pixmap = malloc(sizeof(Pixel24*) * PictureInfo.height);

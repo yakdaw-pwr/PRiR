@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 /* File Header */
 typedef struct BMPFILEHEADER {
@@ -42,8 +43,11 @@ int main(int argc, char** argv) {
     int i, j;
     char szary;
     short padding;
-    //char** grayPicture;
     Pixel24** pixmap;
+
+    double timeStart;
+    double timeFinish;
+    double completeTime;
     
     char *fileName = (char*) malloc(128 * sizeof(char));
     char *filePath = (char*) malloc(132 * sizeof(char));
@@ -55,6 +59,9 @@ int main(int argc, char** argv) {
     
     if(inputFile = fopen(filePath, "rb"))
     {       
+	  // Start timer
+	  timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
+
           // Read BMP headers
           fread(&FileInfo.type,2,1,inputFile);
           fread(&FileInfo.fileSize,4,1,inputFile);
@@ -72,6 +79,10 @@ int main(int argc, char** argv) {
           fread(&PictureInfo.vResolution,4,1,inputFile);
           fread(&PictureInfo.nColors,4,1,inputFile);
           fread(&PictureInfo.nImportantColors,4,1,inputFile);
+
+	   printf("Picture width: %d\nPicture height: %d\n",
+			PictureInfo.width, PictureInfo.height);
+	   printf("Pixels number: %d\n", PictureInfo.width * PictureInfo.height);
           
            // Memory allocation for PixMap
            pixmap = malloc(sizeof(Pixel24*) * PictureInfo.height);
@@ -129,8 +140,13 @@ int main(int argc, char** argv) {
            
            // Close files
            fclose(inputFile);
+
+	   // Stop timer
+	   timeFinish  = clock() / (CLOCKS_PER_SEC / 1000000);
+	   completeTime = (timeFinish - timeStart) / 1000000;
+	   printf("\nComplete time: %.6lf\n", completeTime);   
     }
     else printf("blad odczytu pliku"); 
-    
+
     return (EXIT_SUCCESS);
 }
