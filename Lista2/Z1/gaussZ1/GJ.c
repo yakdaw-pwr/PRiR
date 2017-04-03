@@ -2,37 +2,35 @@
 #include<stdlib.h>
 #include<time.h>
 
-
 //load
-
-double** loadMatrix(const char* file_name, double** matrix, int* rowCount) {
-    FILE* file = fopen(file_name, "r");
-    int i = 0;
-    int indexColumn = 0;
-    int indexRow = 0;
+double** loadMatrix(const char* file_name, double** matrix, int* rowSize) {
+    FILE* data = fopen(file_name, "r");
+    int columnNum = 0;
+    int rowNum = 0;
     double readdouble = 0;
 
     //scan number of rows/columns which is provided at the beginning
-    fscanf(file, "%d", &i);
-    *rowCount = i;
+    int tempMemory = 0;
+    fscanf(data, "%d", &tempMemory);
+    *rowSize = tempMemory;
 
-    matrix = (double**) calloc(*rowCount, sizeof (double*));
+    matrix = (double**) calloc(*rowSize, sizeof (double*));
 
-    for (int j = 0; j < *rowCount; j++) {
-        matrix[j] = (double*) calloc((*rowCount) + 1, sizeof (double));
+    for (int j = 0; j < *rowSize; j++) {
+        matrix[j] = (double*) calloc((*rowSize) + 1, sizeof (double));
     }
 
-    while (!feof(file)) {
-        fscanf(file, "%lf", &readdouble);
-        matrix[indexColumn][indexRow] = readdouble;
-        indexRow++;
-        if (indexRow > (*rowCount)) {
-            indexRow = 0;
-            indexColumn++;
-            if (indexColumn > *rowCount - 1) break;
+    while (!feof(data)) {
+        fscanf(data, "%lf", &readdouble);
+        matrix[columnNum][rowNum] = readdouble;
+        rowNum++;
+        if (rowNum > (*rowSize)) {
+            rowNum = 0;
+            columnNum++;
+            if (columnNum > *rowSize - 1) break;
         }
     }
-    fclose(file);
+    fclose(data);
     return matrix;
 }
 
