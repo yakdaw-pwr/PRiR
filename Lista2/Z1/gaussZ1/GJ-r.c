@@ -50,8 +50,8 @@ void substract(double* baseRow, double* destRow, double multiValue, int rowSize)
     }
 }
 
-void subRows(double** matrix, int rowIndex, int rowCount) {
-#pragma omp parallel for num_threads(10)
+void subRows(double** matrix, int rowIndex, int rowCount, int thr) {
+#pragma omp parallel for num_threads(thr)
     for (int i = 0; i < rowCount; i++) {
         if (i != rowIndex && matrix[i][rowIndex] != 0) {
             double value = matrix[rowIndex][rowIndex] / matrix[i][rowIndex];
@@ -73,12 +73,12 @@ void printFinalMatrix(double** matrix, int rowCount) {
     }
 }
 
-double* calculateGJ(double** matrix, int rowCount) {
+double* calculateGJ(double** matrix, int rowCount, int thr) {
     double* solutionMatrix = (double*) calloc(rowCount, sizeof (double));
 
     for (int i = 0; i < rowCount; i++) {
         divide(matrix[i], matrix[i][i], rowCount + 1);
-        subRows(matrix, i, rowCount);
+        subRows(matrix, i, rowCount, thr);
     }
 
     for (int i = 0; i < rowCount; i++) {
@@ -95,28 +95,27 @@ void releaseMemory(double** matrix, double* solution, int rowCount) {
     free(solution);
 }
 
-void calculate(const char* inputFileName) {
+void calculate(const char* inputFileName, int thr) {
     //creating two dimensional matrix
     double** matrix;
     double* solution;
     int rowCount = 0;
-
     matrix = loadMatrix(inputFileName, matrix, &rowCount);
-    solution = calculateGJ(matrix, rowCount);
-    printFinalMatrix(matrix, rowCount);
+    solution = calculateGJ(matrix, rowCount, thr);
+    //    printFinalMatrix(matrix, rowCount);
     releaseMemory(matrix, solution, rowCount);
 }
 
-void calc(double* firstTime, double* secondTime, double* completeTime) {
+void calc(double* firstTime, double* secondTime, double* completeTime, int thr) {
     //starting the time and choosing accuracy
     double timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
 
-    calculate("dane1");
+    calculate("dane1", thr);
 
     //getting the time
     double firstDataTime = clock() / (CLOCKS_PER_SEC / 1000000);
 
-    calculate("dane2");
+    calculate("dane2", thr);
 
     double finishTime = clock() / (CLOCKS_PER_SEC / 1000000);
 
@@ -127,21 +126,39 @@ void calc(double* firstTime, double* secondTime, double* completeTime) {
 
 int main() {
 
-    int numberOfLoops = 1;
+    int numberOfLoops = 100;
+    int numberOfThreads = 50;
 
-    double firstTime, secondTime, completeTime;
+    for (int thr = 1; thr <= numberOfThreads; thr++) {
+        double firstTime = 0,
+                secondTime = 0,
+                completeTime = 0;
 
-    for (int i = 0; i < numberOfLoops; i++) {
-        calc(&firstTime, &secondTime, &completeTime);
+
+        for (int i = 0; i < numberOfLoops; i++) {
+            calc(&firstTime, &secondTime, &completeTime, thr);
+        }
+        printf("\nAVERAGE TIMES:\n"
+                "First data: %.6lf\n"
+                "Second data: %.6lf\n"
+                "Complete time: %.6lf\n\n"
+                "Number of threads: %d\n",
+                firstTime / numberOfLoops,
+                secondTime / numberOfLoops,
+                completeTime / numberOfLoops,
+                thr);
+
+        //                printf(
+        //                "%.6lf "
+        //                "%.6lf "
+        //                "%.6lf "
+        //                "%d\n",
+        //                firstTime / numberOfLoops,
+        //                secondTime / numberOfLoops,
+        //                completeTime / numberOfLoops,
+        //                thr);
+
     }
-
-    printf("\nAVERAGE TIMES:\n"
-            "First data: %.6lf\n"
-            "Second data: %.6lf\n"
-            "Complete time: %.6lf\n",
-            firstTime / numberOfLoops,
-            secondTime / numberOfLoops,
-            completeTime / numberOfLoops);
 
     return (0);
 }

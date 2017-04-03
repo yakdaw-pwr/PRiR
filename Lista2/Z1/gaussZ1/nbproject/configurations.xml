@@ -12,6 +12,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>GJ-r.c</itemPath>
       <itemPath>GJ.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -51,6 +52,8 @@
           <commandLine>-fopenmp</commandLine>
         </cTool>
       </compileType>
+      <item path="GJ-r.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="GJ.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
@@ -75,6 +78,8 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="GJ-r.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="GJ.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
