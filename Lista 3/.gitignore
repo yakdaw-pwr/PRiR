@@ -31,8 +31,4 @@
 # Debug files
 *.dSYM/
 *.su
-/Lista2/Z1/gaussZ1/dist/
-/Lista2/Z1/gaussZ1/build/
-/Lista2/Z1/GaussGenerator/nbproject/private/
-/Lista2/Z1/GaussGenerator/build/
-*.bmp
+/obrazy/build/
