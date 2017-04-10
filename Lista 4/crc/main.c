@@ -14,13 +14,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 char *MakeCRC3(char *BitString);
 char *MakeCRC12(char *BitString);
 char *MakeCRC16(char *BitString);
 char *MakeCRC32(char *BitString);
 
-char *convertHexToBinary(const char *hexString);
+char* convertHexToBinary(const char *hexString);
 
 /*
  * 
@@ -183,26 +184,24 @@ char *MakeCRC32(char *BitString) {
 }
 
 char* convertHexToBinary(const char *hexString) {
-    char* binaryString = (char*) malloc((strlen(hexString) * 4) * sizeof (char));
-    char ch = *hexString;
-    int i;
-    const char* quads[] = {"0000", "0001", "0010", "0011", "0100", "0101",
+    char *hexDigitToBinary[16] = {
+        "0000", "0001", "0010", "0011", "0100", "0101",
         "0110", "0111", "1000", "1001", "1010", "1011",
-        "1100", "1101", "1110", "1111"};
+        "1100", "1101", "1110", "1111"
+    };
 
-    while (ch == ' ' || ch == '\t')
-        ch = *(++hexString);
+    char hexDigits[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8',
+        '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-    for (i = 0; i < 8; i++) {
-        if (ch >= '0' && ch <= '9')
-            strncat(binaryString, quads[ch - '0'], 4);
-        if (ch >= 'A' && ch <= 'F')
-            strncat(binaryString, quads[10 + ch - 'A'], 4);
-        if (ch >= 'a' && ch <= 'f')
-            strncat(binaryString, quads[10 + ch - 'a'], 4);
+    char* binaryNumber = (char*) malloc((strlen(hexString)*4 + 1));
 
-        ch = *(++hexString);
+    for (int i = 0; hexString[i] != '\0'; i++) {
+        for (int j = 0; j < 16; j++) {
+            if (hexString[i] == hexDigits[j]) {
+                strcat(binaryNumber, hexDigitToBinary[j]);
+            }
+        }
     }
 
-    return binaryString;
+    return binaryNumber;  
 }
