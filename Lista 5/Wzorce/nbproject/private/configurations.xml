@@ -25,8 +25,11 @@
       <runprofile version="9">
         <runcommandpicklist>
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 3 gowno fragles jacek 10</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 3 exist ghost mankin 10</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 3 exist ghost Hamlet 10</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}"</runcommand>
+        <runcommand>"${OUTPUT_PATH}" 3 exist ghost Hamlet 10</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>
