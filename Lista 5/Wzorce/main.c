@@ -40,6 +40,7 @@ int main(int argc, char** argv) {
         exit(EXIT_FAILURE);
     }
 
+    // Zapisywanie zawartosci pliku do stringa
     size_t fileLength;
     char *text = NULL;
 
@@ -52,11 +53,14 @@ int main(int argc, char** argv) {
 
     fclose(fp);
     
-    double* completeTime = (double*)malloc(sizeof(double) * numOfPatterns);
+    // Inicjowanie tablicy czasow dla kazdego wzorca
+    double* patternTime = (double*)malloc(sizeof(double) * numOfPatterns);
+    double completeTime;
 
+    // Rownolegle wykonanie wyszukiwania wzorca
     #pragma omp parallel num_threads(numOfThreads)
     {
-        #pragma omp for
+        #pragma omp for schedule(dynamic, 1)
         for (int p = 0; p < numOfPatterns; p++) {
             
             double timeStart;
@@ -68,9 +72,10 @@ int main(int argc, char** argv) {
             n = fileLength;
             m = patternLength;
 
-            printf("--- %s START ---\n", patterns[p]);            
+            printf("--------- %s START ---------\n", patterns[p]);            
             timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
             
+            // Algorytm naiwny
             i = 0;
             while (i <= n - m) {
                 j = 0;
@@ -80,14 +85,19 @@ int main(int argc, char** argv) {
             }
             
             timeFinish = clock() / (CLOCKS_PER_SEC / 1000000);
-            completeTime[p] = ((timeFinish - timeStart) / 1000000);
+            patternTime[p] = ((timeFinish - timeStart) / 1000000);
+            
+            printf("--------- %s KONIEC ---------\n", patterns[p]);  
         }
     }
     
     printf("\n\n\n");
     for (int p = 0; p < numOfPatterns; p++) {
-        printf("\"%s\" processing time: %.6lf s\n", patterns[p], completeTime[p]);
+        printf("\"%s\" processing time: %.6lf s\n", patterns[p], patternTime[p]);
+        completeTime += patternTime[p];
     }
+    
+    printf("\nComplete time: %.6lf s\n", completeTime);
 
     return (EXIT_SUCCESS);
 }
