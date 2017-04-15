@@ -40,8 +40,8 @@ int main(int argc, char** argv) {
 
     printf("\nBinary data: %s\n", binaryData);
 
-    crcValue = MakeCRC(binaryData, 32); // Calculate CRC
-    char* crcNonGeneric = MakeCRC32(binaryData);
+    crcValue = MakeCRC(binaryData, 3); // Calculate CRC
+    char* crcNonGeneric = MakeCRC3(binaryData);
 
     printf("Wartosc generycznego CRC dla 0x%s to %s\n", hexData, crcValue);
     printf("Wartosc CRC dla 0x%s to %s\n", hexData, crcNonGeneric);
@@ -57,6 +57,9 @@ char *MakeCRC(char *BitString, int crcNumber) {
     char* polynomial;
     
     switch(crcNumber) {
+        case 3:
+            polynomial = "011";
+            break;
         case 12:
             polynomial = "100000001111";
             break;

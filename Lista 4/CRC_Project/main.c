@@ -23,6 +23,7 @@ char *MakeCRC(char *BitString, int crcNumber);
 
 char* reverseString(char *str);
 char* convertHexToBinary(const char *hexString);
+char* convertBinaryToHex(const char *binaryString);
 
 int main(int argc, char** argv) {
 
@@ -51,11 +52,11 @@ int main(int argc, char** argv) {
         }
 
         char* calculatedCRC = MakeCRC(convertHexToBinary(hexData), crcVersion);
-        printf("Wartosc CRC: %s\n", calculatedCRC);
+        char* hexCrc = convertBinaryToHex(calculatedCRC);
+        
+        printf("Wartosc CRC: %s\n", hexCrc);
     }
     else if (strcasecmp(argv[1], "TESTUJ") == 0) {
-        printf("Testuj dobrze!\n");
-
         // SPRAWDZIĆ ARGUMENTY I TESTOWANIE CRC ZROBIC
     }
     else {
@@ -166,4 +167,13 @@ char* convertHexToBinary(const char *hexString) {
     }
 
     return binaryNumber;
+}
+
+char* convertBinaryToHex(const char *binaryString) {
+    int value = (int) strtol(binaryString, NULL, 2);
+    char* hexString = (char*)malloc(sizeof(char) * (strlen(binaryString)/4));
+
+    sprintf(hexString, "%x", value);
+
+    return hexString;
 }
