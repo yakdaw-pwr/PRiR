@@ -16,10 +16,13 @@
 #include <string.h>
 #include <ctype.h>
 
+char *MakeCRC(char *BitString, int crcNumber);
 char *MakeCRC3(char *BitString);
 char *MakeCRC12(char *BitString);
 char *MakeCRC16(char *BitString);
 char *MakeCRC32(char *BitString);
+
+char* reverseString(char *str);
 
 char* convertHexToBinary(const char *hexString);
 
@@ -37,11 +40,70 @@ int main(int argc, char** argv) {
 
     printf("\nBinary data: %s\n", binaryData);
 
-    crcValue = MakeCRC3(binaryData); // Calculate CRC
+    crcValue = MakeCRC(binaryData, 32); // Calculate CRC
+    char* crcNonGeneric = MakeCRC32(binaryData);
 
-    printf("Wartosc CRC dla 0x%s to %s\n", hexData, crcValue);
+    printf("Wartosc generycznego CRC dla 0x%s to %s\n", hexData, crcValue);
+    printf("Wartosc CRC dla 0x%s to %s\n", hexData, crcNonGeneric);
+
 
     return (EXIT_SUCCESS);
+}
+
+char *MakeCRC(char *BitString, int crcNumber) {
+    char* Res = (char*) malloc(sizeof (char) * (crcNumber + 1));
+    char* CRC = (char*) malloc(sizeof (char) * crcNumber);
+
+    char* polynomial;
+    
+    switch(crcNumber) {
+        case 12:
+            polynomial = "100000001111";
+            break;
+        case 16:
+            polynomial = "1000000000000101";
+            break;
+        case 32:
+            polynomial = "00000100110000010001110110110111";
+            break;
+        default:
+            return NULL;
+    }
+    // "011";
+    // "100000001111";
+    // "1000000000000101";
+    // "00000100110000010001110110110111";
+    polynomial = reverseString(polynomial);
+
+    char DoInvert;
+
+    for (int i = 0; i < crcNumber; ++i) {
+        CRC[i] = 0;
+    }
+
+    for (int i = 0; i < strlen(BitString); ++i) {
+        DoInvert = ('1' == BitString[i]) ^ CRC[crcNumber - 1];
+
+        for (int j = crcNumber - 1; j > 0; j--) {
+            if (polynomial[j] == '1') {
+                CRC[j] = CRC[j - 1] ^ DoInvert;
+            } else {
+                CRC[j] = CRC[j - 1];
+            }
+        }
+
+        if (polynomial[0] == '1') {
+            CRC[0] = DoInvert;
+        }
+    }
+
+    for (int i = 0; i < crcNumber; ++i) {
+        Res[(crcNumber - 1) - i] = CRC[i] ? '1' : '0'; // Convert binary to ASCII  
+    }
+
+    Res[crcNumber] = 0; // Set string terminator
+
+    return (Res);
 }
 
 char *MakeCRC3(char *BitString) {
@@ -62,7 +124,7 @@ char *MakeCRC3(char *BitString) {
 
     for (i = 0; i < 3; ++i) Res[2 - i] = CRC[i] ? '1' : '0'; // Convert binary to ASCII
     Res[3] = 0; // Set string terminator
-    
+
     return (Res);
 }
 
@@ -183,6 +245,16 @@ char *MakeCRC32(char *BitString) {
     return (Res);
 }
 
+char* reverseString(char *str) {
+    static int i = 0;
+    static char rev[100];
+    if (*str) {
+        reverseString(str + 1);
+        rev[i++] = *str;
+    }
+    return rev;
+}
+
 char* convertHexToBinary(const char *hexString) {
     char *hexDigitToBinary[16] = {
         "0000", "0001", "0010", "0011", "0100", "0101",
@@ -203,5 +275,5 @@ char* convertHexToBinary(const char *hexString) {
         }
     }
 
-    return binaryNumber;  
+    return binaryNumber;
 }
