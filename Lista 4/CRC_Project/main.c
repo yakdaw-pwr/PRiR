@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   main.c
  * Author: yakdaw
  *
@@ -53,13 +53,11 @@ int main(int argc, char** argv) {
 
         char* calculatedCRC = MakeCRC(convertHexToBinary(hexData), crcVersion);
         char* hexCrc = convertBinaryToHex(calculatedCRC);
-        
+
         printf("Wartosc CRC: %s\n", hexCrc);
-    }
-    else if (strcasecmp(argv[1], "TESTUJ") == 0) {
+    } else if (strcasecmp(argv[1], "TESTUJ") == 0) {
         // SPRAWDZIĆ ARGUMENTY I TESTOWANIE CRC ZROBIC
-    }
-    else {
+    } else {
         fprintf(stderr, "Zly pierwszy argument wywolania programu.\n"
                 "Przewidziane mozliwosci: oblicz/testuj\n");
         return (1);
@@ -88,9 +86,11 @@ char *MakeCRC(char *BitString, int crcNumber) {
     char* Res = (char*) malloc(sizeof (char) * (crcNumber + 1));
     char* CRC = (char*) malloc(sizeof (char) * crcNumber);
 
+    int i, j;
+
     char* polynomial;
-    
-    switch(crcNumber) {
+
+    switch (crcNumber) {
         case 12:
             polynomial = "100000001111";
             break;
@@ -107,14 +107,14 @@ char *MakeCRC(char *BitString, int crcNumber) {
 
     char DoInvert;
 
-    for (int i = 0; i < crcNumber; ++i) {
+    for (i = 0; i < crcNumber; ++i) {
         CRC[i] = 0;
     }
 
-    for (int i = 0; i < strlen(BitString); ++i) {
+    for (i = 0; i < strlen(BitString); ++i) {
         DoInvert = ('1' == BitString[i]) ^ CRC[crcNumber - 1];
 
-        for (int j = crcNumber - 1; j > 0; j--) {
+        for (j = crcNumber - 1; j > 0; j--) {
             if (polynomial[j] == '1') {
                 CRC[j] = CRC[j - 1] ^ DoInvert;
             } else {
@@ -127,7 +127,7 @@ char *MakeCRC(char *BitString, int crcNumber) {
         }
     }
 
-    for (int i = 0; i < crcNumber; ++i) {
+    for (i = 0; i < crcNumber; ++i) {
         Res[(crcNumber - 1) - i] = CRC[i] ? '1' : '0';
     }
 
@@ -147,6 +147,7 @@ char* reverseString(char *str) {
 }
 
 char* convertHexToBinary(const char *hexString) {
+    int i, j;
     char *hexDigitToBinary[16] = {
         "0000", "0001", "0010", "0011", "0100", "0101",
         "0110", "0111", "1000", "1001", "1010", "1011",
@@ -158,8 +159,8 @@ char* convertHexToBinary(const char *hexString) {
 
     char* binaryNumber = (char*) malloc((strlen(hexString)*4 + 1));
 
-    for (int i = 0; hexString[i] != '\0'; i++) {
-        for (int j = 0; j < 16; j++) {
+    for (i = 0; hexString[i] != '\0'; i++) {
+        for (j = 0; j < 16; j++) {
             if (hexString[i] == hexDigits[j]) {
                 strcat(binaryNumber, hexDigitToBinary[j]);
             }
@@ -171,7 +172,7 @@ char* convertHexToBinary(const char *hexString) {
 
 char* convertBinaryToHex(const char *binaryString) {
     int value = (int) strtol(binaryString, NULL, 2);
-    char* hexString = (char*)malloc(sizeof(char) * (strlen(binaryString)/4));
+    char* hexString = (char*) malloc(sizeof (char) * (strlen(binaryString) / 4));
 
     sprintf(hexString, "%x", value);
 
