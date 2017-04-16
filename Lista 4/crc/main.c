@@ -14,13 +14,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
+char *MakeCRC(char *BitString, int crcNumber);
 char *MakeCRC3(char *BitString);
 char *MakeCRC12(char *BitString);
 char *MakeCRC16(char *BitString);
 char *MakeCRC32(char *BitString);
 
-char *convertHexToBinary(const char *hexString);
+char* reverseString(char *str);
+
+char* convertHexToBinary(const char *hexString);
 
 /*
  * 
@@ -36,11 +40,73 @@ int main(int argc, char** argv) {
 
     printf("\nBinary data: %s\n", binaryData);
 
-    crcValue = MakeCRC3(binaryData); // Calculate CRC
+    crcValue = MakeCRC(binaryData, 3); // Calculate CRC
+    char* crcNonGeneric = MakeCRC3(binaryData);
 
-    printf("Wartosc CRC dla 0x%s to %s\n", hexData, crcValue);
+    printf("Wartosc generycznego CRC dla 0x%s to %s\n", hexData, crcValue);
+    printf("Wartosc CRC dla 0x%s to %s\n", hexData, crcNonGeneric);
+
 
     return (EXIT_SUCCESS);
+}
+
+char *MakeCRC(char *BitString, int crcNumber) {
+    char* Res = (char*) malloc(sizeof (char) * (crcNumber + 1));
+    char* CRC = (char*) malloc(sizeof (char) * crcNumber);
+
+    char* polynomial;
+    
+    switch(crcNumber) {
+        case 3:
+            polynomial = "011";
+            break;
+        case 12:
+            polynomial = "100000001111";
+            break;
+        case 16:
+            polynomial = "1000000000000101";
+            break;
+        case 32:
+            polynomial = "00000100110000010001110110110111";
+            break;
+        default:
+            return NULL;
+    }
+    // "011";
+    // "100000001111";
+    // "1000000000000101";
+    // "00000100110000010001110110110111";
+    polynomial = reverseString(polynomial);
+
+    char DoInvert;
+
+    for (int i = 0; i < crcNumber; ++i) {
+        CRC[i] = 0;
+    }
+
+    for (int i = 0; i < strlen(BitString); ++i) {
+        DoInvert = ('1' == BitString[i]) ^ CRC[crcNumber - 1];
+
+        for (int j = crcNumber - 1; j > 0; j--) {
+            if (polynomial[j] == '1') {
+                CRC[j] = CRC[j - 1] ^ DoInvert;
+            } else {
+                CRC[j] = CRC[j - 1];
+            }
+        }
+
+        if (polynomial[0] == '1') {
+            CRC[0] = DoInvert;
+        }
+    }
+
+    for (int i = 0; i < crcNumber; ++i) {
+        Res[(crcNumber - 1) - i] = CRC[i] ? '1' : '0'; // Convert binary to ASCII  
+    }
+
+    Res[crcNumber] = 0; // Set string terminator
+
+    return (Res);
 }
 
 char *MakeCRC3(char *BitString) {
@@ -61,7 +127,7 @@ char *MakeCRC3(char *BitString) {
 
     for (i = 0; i < 3; ++i) Res[2 - i] = CRC[i] ? '1' : '0'; // Convert binary to ASCII
     Res[3] = 0; // Set string terminator
-    
+
     return (Res);
 }
 
@@ -182,27 +248,35 @@ char *MakeCRC32(char *BitString) {
     return (Res);
 }
 
+char* reverseString(char *str) {
+    static int i = 0;
+    static char rev[100];
+    if (*str) {
+        reverseString(str + 1);
+        rev[i++] = *str;
+    }
+    return rev;
+}
+
 char* convertHexToBinary(const char *hexString) {
-    char* binaryString = (char*) malloc((strlen(hexString) * 4) * sizeof (char));
-    char ch = *hexString;
-    int i;
-    const char* quads[] = {"0000", "0001", "0010", "0011", "0100", "0101",
+    char *hexDigitToBinary[16] = {
+        "0000", "0001", "0010", "0011", "0100", "0101",
         "0110", "0111", "1000", "1001", "1010", "1011",
-        "1100", "1101", "1110", "1111"};
+        "1100", "1101", "1110", "1111"
+    };
 
-    while (ch == ' ' || ch == '\t')
-        ch = *(++hexString);
+    char hexDigits[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8',
+        '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-    for (i = 0; i < 8; i++) {
-        if (ch >= '0' && ch <= '9')
-            strncat(binaryString, quads[ch - '0'], 4);
-        if (ch >= 'A' && ch <= 'F')
-            strncat(binaryString, quads[10 + ch - 'A'], 4);
-        if (ch >= 'a' && ch <= 'f')
-            strncat(binaryString, quads[10 + ch - 'a'], 4);
+    char* binaryNumber = (char*) malloc((strlen(hexString)*4 + 1));
 
-        ch = *(++hexString);
+    for (int i = 0; hexString[i] != '\0'; i++) {
+        for (int j = 0; j < 16; j++) {
+            if (hexString[i] == hexDigits[j]) {
+                strcat(binaryNumber, hexDigitToBinary[j]);
+            }
+        }
     }
 
-    return binaryString;
+    return binaryNumber;
 }
