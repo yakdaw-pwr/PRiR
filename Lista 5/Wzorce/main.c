@@ -76,13 +76,26 @@ int main(int argc, char** argv) {
             timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
             
             // Algorytm naiwny
-            i = 0;
-            while (i <= n - m) {
+//            i = 0;
+//            while (i <= n - m) {
+//                j = 0;
+//                while ((j < m)&&(patterns[p][j] == text[i + j])) j++;
+//                if (j == m) printf("%s : %d\n", patterns[p], i + 1);
+//                i++;
+//            }
+      
+            for (int i = 0; i < n-m; i++) {
+//                printf("Wzorzec: %s, Watek: %d", patterns[p], omp_get_thread_num());
                 j = 0;
-                while ((j < m)&&(patterns[p][j] == text[i + j])) j++;
-                if (j == m) printf("%s : %d\n", patterns[p], i + 1);
-                i++;
+                while ((j < m) && (patterns[p][j] == text[i + j])) {
+                    j++;
+                }
+                if (j == m) {
+                    printf("%s : %d\n", patterns[p], i + 1);
+                }
             }
+            
+            
             
             timeFinish = clock() / (CLOCKS_PER_SEC / 1000000);
             patternTime[p] = ((timeFinish - timeStart) / 1000000);
@@ -128,3 +141,38 @@ int validateExecutionArguments(int argc, char** argv,
 
     return (0);
 }
+
+//int find_patterns(char** words, char *pattern, int threads_count, int words_counter) {
+//    int i = 0, j, count = 0, k = 0;
+//    int n = 0; //dlugosc slowa
+//    int m = strlen(pattern); //dlugosc wzorca
+//    int pom = 0;
+//    double start, times;
+//
+//    start = omp_get_wtime();
+//    printf("\nwzorzec '%s': %d, watek %i ", pattern, m, omp_get_thread_num());
+//
+//#pragma omp parallel num_threads(threads_count) shared(m,words_counter,words,pattern)
+//    {
+//#pragma omp for private(k,i,j)  reduction(+:count)
+//        for (int k = 0; k < words_counter; k++) {
+//            printf("\nWatek nr %i, k: %d ", omp_get_num_threads(), k);
+//            n = strlen(words[k]);
+//            pom = n - m;
+//            for (i = 0; i <= pom; i++) {
+//                for (j = 0; j < m; j++) {
+//                    if (words[k][i + j] != pattern[j])
+//                        j = m + 1;
+//                }
+//                if (j == m) {
+//                    count++;
+//                    //    printf("nr %i k: %d count %d\n", omp_get_thread_num(), k, count);
+//                }
+//            }
+//        }
+//    }
+//    times = omp_get_wtime() - start;
+//    printf("Czas: %f\n ", times);
+//    printf("liczba wystapien %s w pliku : %d\n", pattern, count);
+//    return 0;
+//}
