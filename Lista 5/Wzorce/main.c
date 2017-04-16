@@ -7,7 +7,6 @@
 int validateExecutionArguments(int argc, char** argv,
         int* numOfPatterns, int* numOfThreads);
 
-
 int main(int argc, char** argv) {
 
     int numOfPatterns;
@@ -21,7 +20,7 @@ int main(int argc, char** argv) {
     }
 
     // Dodawanie wzorcow do tablicy
-    patterns = (char**)malloc(sizeof(char*) * numOfPatterns);
+    patterns = (char**) malloc(sizeof (char*) * numOfPatterns);
     for (int i = 0; i < numOfPatterns; i++) {
         patterns[i] = argv[i + 2];
     }
@@ -52,64 +51,65 @@ int main(int argc, char** argv) {
     fread(text, fileLength, 1, fp);
 
     fclose(fp);
-    
+
     // Inicjowanie tablicy czasow dla kazdego wzorca
-    double* patternTime = (double*)malloc(sizeof(double) * numOfPatterns);
+    double* patternTime = (double*) malloc(sizeof (double) * numOfPatterns);
     double completeTime;
-
-    // Rownolegle wykonanie wyszukiwania wzorca
-    #pragma omp parallel num_threads(numOfThreads)
-    {
-        #pragma omp for schedule(dynamic, 1)
-        for (int p = 0; p < numOfPatterns; p++) {
-            
-            double timeStart;
-            double timeFinish;
-
-            int patternLength = strlen(patterns[p]);
-            
-            int m, n, i, j;
-            n = fileLength;
-            m = patternLength;
-
-            printf("--------- %s START ---------\n", patterns[p]);            
-            timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
-            
-            // Algorytm naiwny
-//            i = 0;
-//            while (i <= n - m) {
-//                j = 0;
-//                while ((j < m)&&(patterns[p][j] == text[i + j])) j++;
-//                if (j == m) printf("%s : %d\n", patterns[p], i + 1);
-//                i++;
-//            }
-      
-            for (int i = 0; i < n-m; i++) {
-//                printf("Wzorzec: %s, Watek: %d", patterns[p], omp_get_thread_num());
-                j = 0;
-                while ((j < m) && (patterns[p][j] == text[i + j])) {
-                    j++;
-                }
-                if (j == m) {
-                    printf("%s : %d\n", patterns[p], i + 1);
-                }
-            }
-            
-            
-            
-            timeFinish = clock() / (CLOCKS_PER_SEC / 1000000);
-            patternTime[p] = ((timeFinish - timeStart) / 1000000);
-            
-            printf("--------- %s KONIEC ---------\n", patterns[p]);  
-        }
+    
+    int* patternCount = (int*)malloc(sizeof(int) * numOfPatterns);
+    for (int p = 0; p < numOfPatterns; p++) {
+        patternCount[p] = 0;
     }
     
+    // Ustawienie ilosci watkow na ktorych dziala program
+    omp_set_num_threads(numOfThreads);
+ 
+    for (int p = 0; p < numOfPatterns; p++) {
+
+        double timeStart;
+        double timeFinish;
+
+        int patternLength = strlen(patterns[p]);
+
+        int m, n, i, j;
+        n = fileLength;
+        m = patternLength;
+
+        printf("--------- %s START ---------\n", patterns[p]);
+        timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
+
+        // Rownolegle wykonanie wyszukiwania wzorca
+        #pragma omp parallel for default(shared) private(i, j) schedule(dynamic, 3)
+        for (i = 0; i < n - m; i++) {
+            j = 0;
+            while ((j < m) && (patterns[p][j] == text[i + j])) {
+                j++;
+            }
+            if (j == m) {
+                printf("Wzorzec: %s, Watek: %d\n", patterns[p], omp_get_thread_num());
+                patternCount[p]++;
+            }
+        }
+
+        timeFinish = clock() / (CLOCKS_PER_SEC / 1000000);
+        patternTime[p] = ((timeFinish - timeStart) / 1000000);
+
+        printf("--------- %s KONIEC ---------\n", patterns[p]);
+    }
+
     printf("\n\n\n");
+    
+    for (int p = 0; p < numOfPatterns; p++) {
+        printf("\"%s\" count: %d\n", patterns[p], patternCount[p]);
+    }
+    
+    printf("\n\n");
+    
     for (int p = 0; p < numOfPatterns; p++) {
         printf("\"%s\" processing time: %.6lf s\n", patterns[p], patternTime[p]);
         completeTime += patternTime[p];
     }
-    
+
     printf("\nComplete time: %.6lf s\n", completeTime);
 
     return (EXIT_SUCCESS);
