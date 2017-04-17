@@ -41,13 +41,13 @@ int main(int argc, char** argv) {
 
         char* hexData = argv[2];
         if (checkIfHexValue(hexData) != 0) {
-            fprintf(stderr, "Dane argumentu 2 powinny byc liczba heksadecymalna");
+            fprintf(stderr, "Dane argumentu 2 powinny byc liczba heksadecymalna\n");
             return (1);
         }
 
         int crcVersion = checkCrcVersion(argv[3]);
         if (crcVersion == -1) {
-            fprintf(stderr, "Bledna wartosc wersji CRC. Mozliwosci: 12/16/32");
+            fprintf(stderr, "Bledna wartosc wersji CRC. Mozliwosci: 12/16/32\n");
             return (1);
         }
 
@@ -56,7 +56,21 @@ int main(int argc, char** argv) {
 
         printf("Wartosc CRC: %s\n", hexCrc);
     } else if (strcasecmp(argv[1], "TESTUJ") == 0) {
-        // SPRAWDZIĆ ARGUMENTY I TESTOWANIE CRC ZROBIC
+        
+        if (argc != 3) {
+            fprintf(stderr, "Bledna ilosc parametrow dla funkcji TESTUJ.\n");
+            return (1);
+        }
+        
+        char* crcHex = argv[2];
+        if (checkIfHexValue(crcHex) != 0 || strlen(crcHex) != 8) {
+            fprintf(stderr, "Dane argumentu 2 powinny byc 32-bitowa "
+                    "liczba zakodowana heksadecymalnie\n");
+            return (1);
+        }
+        
+        // TESTUJEMY...
+        
     } else {
         fprintf(stderr, "Zly pierwszy argument wywolania programu.\n"
                 "Przewidziane mozliwosci: oblicz/testuj\n");
