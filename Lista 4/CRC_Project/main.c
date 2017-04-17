@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <string.h>
+#include <ctype.h>
 
 int checkIfHexValue(char* s);
 int checkCrcVersion(char* s);
@@ -25,7 +26,11 @@ char* reverseString(char *str);
 char* convertHexToBinary(const char *hexString);
 char* convertBinaryToHex(const char *binaryString);
 
-int strlstchar(const char *str, const char ch);
+int testCrc(char* binaryString, int crcNumber);
+long binaryStringToDecimal(char* binaryS);
+void convertStringToUppercase(char* hexS);
+
+long power(long base, int exp);
 
 int main(int argc, char** argv) {
 
@@ -80,13 +85,23 @@ int main(int argc, char** argv) {
 
         char *binaryData;
         char *crcValue;
+
+        convertStringToUppercase(crcHex);
         binaryData = convertHexToBinary(crcHex);
-        int meaningfulBytesCount = strlstchar(binaryData, '1');
 
-        binaryStringToInt(binaryData);
+        // TEMP
+        long decimal = binaryStringToDecimal(binaryData);
+        printf("Decimal %ld\n", decimal);
 
 
-        validateMeaningfulBytesCount(meaningfulBytesCount);
+        //        printf("String: %s\n", str);
+
+        //        #pragma omp parallel sections
+        //        {
+        //            
+        //        }
+
+        //        validateMeaningfulBytesCount(meaningfulBytesCount);
 
     } else {
         fprintf(stderr, "Zly pierwszy argument wywolania programu.\n"
@@ -97,65 +112,47 @@ int main(int argc, char** argv) {
     return (EXIT_SUCCESS);
 }
 
-int validateMeaningfulBytesCount(int meaningfulBytesCount) {
-    if (meaningfulBytesCount > 32) {
-        return 0;
-    } else if (meaningfulBytesCount > 16) {
-        return 1;
-    } else if (meaningfulBytesCount > 12) {
-        checkCRC();
-    }
-}
-#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
-#define BYTE_TO_BINARY(byte)  \
-  (byte & 0x80 ? '1' : '0'), \
-  (byte & 0x40 ? '1' : '0'), \
-  (byte & 0x20 ? '1' : '0'), \
-  (byte & 0x10 ? '1' : '0'), \
-  (byte & 0x08 ? '1' : '0'), \
-  (byte & 0x04 ? '1' : '0'), \
-  (byte & 0x02 ? '1' : '0'), \
-  (byte & 0x01 ? '1' : '0')
+int testCrc(char* binaryString, int crcNumber) {
+    // > 4294967295 out
+    // > 65535 32
+    // > 4095 16 32
+    long maxCrcValue = power(2, crcNumber);
+    long decimalValue = binaryStringToDecimal(binaryString);
 
-const char *byte_to_binary(int x) {
-    static char b[9];
-    b[0] = '\0';
-
-    int z;
-    for (z = 128; z > 0; z >>= 1) {
-        strcat(b, ((x & z) == z) ? "1" : "0");
+    if (maxCrcValue <= decimalValue) {
+        return -1;
     }
 
-    return b;
+    long i;
+    for (i = 0; i < maxCrcValue; i++) {
+
+    }
 }
 
-void checkCRC() {
+long power(long base, int exp) {
+    if (exp < 0)
+        return -1;
 
-    unsigned char bytes[4];
-    unsigned long n = 175;
+    long result = 1;
+    while (exp) {
+        if (exp & 1)
+            result *= base;
+        exp >>= 1;
+        base *= base;
+    }
 
-    bytes[0] = (n >> 24) & 0xFF;
-    bytes[1] = (n >> 16) & 0xFF;
-    bytes[2] = (n >> 8) & 0xFF;
-    bytes[3] = n & 0xFF;
+    return result;
+}
 
+long binaryStringToDecimal(char* binaryS) {
     char *tmp;
-    char *b = "0101";
-
-
-    //    printf("%d\n", strtol(b, &tmp, 2));
+    return strtol(binaryS, &tmp, 2);
 }
 
-void binaryStringToInt(char* binaryS) {
-    char *tmp;
-
-    int integer = strtol(binaryS, &tmp, 2);
-    printf("%d\n", strtol(binaryS, &tmp, 2));
-}
-
-int strlstchar(const char *str, const char ch) {
-    char *chptr = strrchr(str, ch);
-    return chptr - str + 1;
+void convertStringToUppercase(char* hexS) {
+    for (int i = 0; hexS[i]; i++) {
+        hexS[i] = toupper(hexS[i]);
+    }
 }
 
 int checkIfHexValue(char* s) {
