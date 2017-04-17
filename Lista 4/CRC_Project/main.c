@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <string.h>
+#include <ctype.h>
 
 int checkIfHexValue(char* s);
 int checkCrcVersion(char* s);
@@ -26,6 +27,7 @@ char* convertHexToBinary(const char *hexString);
 char* convertBinaryToHex(const char *binaryString);
 
 int strlstchar(const char *str, const char ch);
+void convertStringToUppercase(char* hexS);
 
 int main(int argc, char** argv) {
 
@@ -53,6 +55,7 @@ int main(int argc, char** argv) {
             return (1);
         }
 
+        convertStringToUppercase(hexData);
         char* calculatedCRC = MakeCRC(convertHexToBinary(hexData), crcVersion);
         char* hexCrc = convertBinaryToHex(calculatedCRC);
 
@@ -71,6 +74,8 @@ int main(int argc, char** argv) {
                     "liczba zakodowana heksadecymalnie\n");
             return (1);
         }
+        
+        convertStringToUppercase(crcHex);
         char *binaryData;
         char *crcValue;
         binaryData = convertHexToBinary(crcHex);
@@ -201,3 +206,9 @@ char* convertBinaryToHex(const char *binaryString) {
 
     return hexString;
 }
+
+void convertStringToUppercase(char* hexS) {  
+    for (int i = 0; hexS[i]; i++) {  
+        hexS[i] = toupper(hexS[i]);  
+    }  
+} 
