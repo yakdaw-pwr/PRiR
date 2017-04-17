@@ -26,15 +26,18 @@
       </nativedebugger>
       <runprofile version="9">
         <runcommandpicklist>
-          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" </runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" ObliCz 12312 32</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" ObliCz 12312 16</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" ObliCz 1 16</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 4c11db70a</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 4c11db70</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 99B70000</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" testuj BFA12345</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 0001FFF2</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 0000FBE1</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 0000159F</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 00000BA1</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" testuj 4c11db70</runcommand>
+        <runcommand>"${OUTPUT_PATH}" testuj 00000BA1</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>
