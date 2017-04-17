@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <string.h>
+#include <ctype.h>
 
 const int CRC8 = 8000;
 const int CRC12 = 12000;
@@ -32,6 +33,7 @@ char* convertHexToBinary(const char *hexString);
 char* convertBinaryToHex(const char *binaryString);
 
 int strlstchar(const char *str, const char ch);
+void convertStringToUppercase(char* hexS);
 
 int main(int argc, char** argv) {
 
@@ -59,6 +61,7 @@ int main(int argc, char** argv) {
             return (1);
         }
 
+        convertStringToUppercase(hexData);
         char* calculatedCRC = MakeCRC(convertHexToBinary(hexData), crcVersion);
         char* hexCrc = convertBinaryToHex(calculatedCRC);
 
@@ -77,13 +80,12 @@ int main(int argc, char** argv) {
                     "liczba zakodowana heksadecymalnie\n");
             return (1);
         }
-
-        //        1. Sprawdzić ile bitów znaczacych ma ten podany string pzrez użytkownika
+        convertStringToUppercase(crcHex);
+        //        5. Jeżeli 12 i mniej to generuj liczby -MAXINT +MAXINT i sprawdzaj CRC-32 CRC-16 CRC-12
+        //        4. Jeżeli 13+ to generuj liczby -MAXINT +MAXINT i sprawdzaj CRC-32 i CRC-16
         //        2. Jeżeli 33+ to chuj, na pewno żaden z CRC naszych to nie był (w sumie powinno odrzucić w momencie podawania przez użytkownika stringa)
         //        3. Jeżeli 17+ bitow to CRC-32 bedzie na 100%
-        //        4. Jeżeli 13+ to generuj liczby -MAXINT +MAXINT i sprawdzaj CRC-32 i CRC-16
-        //        5. Jeżeli 12 i mniej to generuj liczby -MAXINT +MAXINT i sprawdzaj CRC-32 CRC-16 CRC-12
-
+        //        1. Sprawdzić ile bitów znaczacych ma ten podany string pzrez użytkownika
         char *binaryData;
         char *crcValue;
         binaryData = convertHexToBinary(crcHex);
@@ -257,3 +259,9 @@ char* convertBinaryToHex(const char *binaryString) {
 
     return hexString;
 }
+
+void convertStringToUppercase(char* hexS) {  
+    for (int i = 0; hexS[i]; i++) {  
+        hexS[i] = toupper(hexS[i]);  
+    }  
+} 
