@@ -16,6 +16,12 @@
 #include <strings.h>
 #include <string.h>
 
+const int CRC8 = 8000;
+const int CRC12 = 12000;
+const int CRC16 = 16000;
+const int CRC32 = 32000;
+const int noCRC = 99999;
+
 int checkIfHexValue(char* s);
 int checkCrcVersion(char* s);
 
@@ -86,7 +92,10 @@ int main(int argc, char** argv) {
         //        binaryStringToInt(binaryData);
 
 
-        validateMeaningfulBytesCount(binaryData);
+        int result = testujCRC(binaryData);
+        printf("Wynik %d", result);
+        return (1);
+
 
     } else {
         fprintf(stderr, "Zly pierwszy argument wywolania programu.\n"
@@ -97,16 +106,16 @@ int main(int argc, char** argv) {
     return (EXIT_SUCCESS);
 }
 
-int validateMeaningfulBytesCount(char *binaryData) {
+int testujCRC(char *binaryData) {
     int meaningfulBytesCount = strlstchar(binaryData, '1');
     int integerFormat = binaryStringToInt(binaryData);
 
     if (meaningfulBytesCount > 32) {
-        return 0;
+        return noCRC;
     } else if (meaningfulBytesCount > 16) {
-        return 1;
+        return CRC32;
     } else if (meaningfulBytesCount > 12) {
-        checkCRC(integerFormat);
+        return checkCRC(integerFormat);
     }
 }
 
@@ -115,19 +124,18 @@ int checkCRC(int integerFormat) {
 
     for (i = 0; i < 2^32; i++) {
         if (i == integerFormat && i < 2^16) {
-            return 0;
+            return CRC16;
         } else if (i == integerFormat) {
-            return 1;
+            return CRC32;
         }
     }
-
-    return -1;
+    return noCRC;
     //    printf("%d\n", strtol(b, &tmp, 2));
 }
 
 int binaryStringToInt(char* binaryS) {
     char *tmp;
-    int integerFormat = strtol(binaryS, &tmp, 2);
+    int integerFormat = strtoul(binaryS, &tmp, 2);
     return integerFormat;
     //    printf("%d\n", strtol(binaryS, &tmp, 2));
 }
