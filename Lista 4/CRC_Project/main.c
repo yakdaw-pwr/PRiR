@@ -17,7 +17,6 @@
 #include <string.h>
 #include <ctype.h>
 
-const int CRC8 = 8000;
 const int CRC12 = 12000;
 const int CRC16 = 16000;
 const int CRC32 = 32000;
@@ -80,15 +79,15 @@ int main(int argc, char** argv) {
                     "liczba zakodowana heksadecymalnie\n");
             return (1);
         }
+
         convertStringToUppercase(crcHex);
-        //        5. Jeżeli 12 i mniej to generuj liczby -MAXINT +MAXINT i sprawdzaj CRC-32 CRC-16 CRC-12
-        //        4. Jeżeli 13+ to generuj liczby -MAXINT +MAXINT i sprawdzaj CRC-32 i CRC-16
-        //        2. Jeżeli 33+ to chuj, na pewno żaden z CRC naszych to nie był (w sumie powinno odrzucić w momencie podawania przez użytkownika stringa)
-        //        3. Jeżeli 17+ bitow to CRC-32 bedzie na 100%
-        //        1. Sprawdzić ile bitów znaczacych ma ten podany string pzrez użytkownika
+
         char *binaryData;
         char *crcValue;
         binaryData = convertHexToBinary(crcHex);
+        //reverse for little endenddeeedt
+        binaryData = reverseString(binaryData);
+
         int meaningfulBytesCount = strlstchar(binaryData, '1');
 
         //        binaryStringToInt(binaryData);
@@ -119,7 +118,7 @@ int testujCRC(char *binaryData) {
     } else if (meaningfulBytesCount > 12) {
         return checkCRCTopTwo(integerFormat);
     } else if (meaningfulBytesCount > 8) {
-        return checkCRCTopThree(integerFormat);
+        return checkCRCAll(integerFormat);
 
     }
 }
@@ -135,28 +134,27 @@ int checkCRCTopTwo(int integerFormat) {
         }
     }
     return noCRC;
-    //    printf("%d\n", strtol(b, &tmp, 2));
 }
 
-int checkCRCTopThree(int integerFormat) {
+int checkCRCAll(int integerFormat) {
     int i;
 
     for (i = 0; i < 2^32; i++) {
-        if (i == integerFormat && i < 2^16) {
+        if (i == integerFormat && i < 2^12) {
+            return CRC12;
+        } else if (i == integerFormat && i < 2^16) {
             return CRC16;
         } else if (i == integerFormat) {
             return CRC32;
         }
     }
     return noCRC;
-    //    printf("%d\n", strtol(b, &tmp, 2));
 }
 
 int binaryStringToInt(char* binaryS) {
     char *tmp;
     int integerFormat = strtoul(binaryS, &tmp, 2);
     return integerFormat;
-    //    printf("%d\n", strtol(binaryS, &tmp, 2));
 }
 
 int strlstchar(const char *str, const char ch) {
