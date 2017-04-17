@@ -12,19 +12,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>GJ-r.c</itemPath>
-      <itemPath>GJ.c</itemPath>
-    </logicalFolder>
-    <logicalFolder name="TestFiles"
-                   displayName="Test Files"
-                   projectFiles="false"
-                   kind="TEST_LOGICAL_FOLDER">
-    </logicalFolder>
-    <logicalFolder name="ExternalFiles"
-                   displayName="Important Files"
-                   projectFiles="false"
-                   kind="IMPORTANT_FILES_FOLDER">
-      <itemPath>Makefile</itemPath>
+      <itemPath>main.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -47,14 +35,8 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
-        <cTool>
-          <standard>3</standard>
-          <commandLine>-fopenmp</commandLine>
-        </cTool>
       </compileType>
-      <item path="GJ-r.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="GJ.c" ex="false" tool="0" flavor2="0">
+      <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -66,7 +48,6 @@
       <compileType>
         <cTool>
           <developmentMode>5</developmentMode>
-          <standard>3</standard>
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
@@ -78,9 +59,7 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
-      <item path="GJ-r.c" ex="false" tool="0" flavor2="0">
-      </item>
-      <item path="GJ.c" ex="false" tool="0" flavor2="0">
+      <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
   </confs>

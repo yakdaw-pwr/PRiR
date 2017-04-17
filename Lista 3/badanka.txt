@@ -1,0 +1,201 @@
+[32b-g1@intek L4]$ gcc szaroscR.c -o withoutOMP.out
+[32b-g1@intek L4]$ gcc szaroscR.c -fopenmp -o 1thread.out
+[32b-g1@intek L4]$ gcc szaroscR.c -fopenmp -o 2thread.out
+[32b-g1@intek L4]$ gcc szaroscR.c -fopenmp -o 4thread.out
+[32b-g1@intek L4]$ gcc szaroscR.c -fopenmp -o 10thread.out
+[32b-g1@intek L4]$ gcc szaroscR.c -fopenmp -o 50thread.out
+
+[32b-g1@intek L4]$ ./withoutOMP.out 
+Insert path to BMP file: /mnt/LRiRP/openMP/BMP/1960
+1 loop time: 1.120282
+2 loop time: 1.106988
+3 loop time: 1.107893
+4 loop time: 1.108103
+5 loop time: 1.108559
+6 loop time: 1.108572
+7 loop time: 1.108116
+8 loop time: 1.107789
+9 loop time: 1.107754
+10 loop time: 1.108362
+
+Average loop time: 1.109242
+
+[32b-g1@intek L4]$ ./1thread.out 
+Insert path to BMP file: /mnt/LRiRP/openMP/BMP/1960
+1 loop time: 1.248259
+2 loop time: 1.247729
+3 loop time: 1.238416
+4 loop time: 1.236561
+5 loop time: 1.244714
+6 loop time: 1.244401
+7 loop time: 1.242434
+8 loop time: 1.235819
+9 loop time: 1.237187
+10 loop time: 1.236076
+
+Average loop time: 1.241160
+[32b-g1@intek L4]$ ./2thread.out 
+Insert path to BMP file: /mnt/LRiRP/openMP/BMP/1960
+1 loop time: 3.176275
+2 loop time: 3.180967
+3 loop time: 3.172048
+4 loop time: 3.170934
+5 loop time: 3.167438
+6 loop time: 3.166854
+7 loop time: 3.167104
+8 loop time: 3.183948
+9 loop time: 3.168079
+10 loop time: 3.168372
+
+Average loop time: 3.172202
+
+[32b-g1@intek L4]$ ./4thread.out 
+Insert path to BMP file: /mnt/LRiRP/openMP/BMP/1960
+1 loop time: 3.410697
+2 loop time: 3.404509
+3 loop time: 3.396501
+4 loop time: 3.405765
+5 loop time: 3.398113
+6 loop time: 3.406666
+7 loop time: 3.405172
+8 loop time: 3.398540
+9 loop time: 3.397877
+10 loop time: 3.406954
+
+Average loop time: 3.403079
+[32b-g1@intek L4]$ ./10thread.out 
+Insert path to BMP file: /mnt/LRiRP/openMP/BMP/1960
+1 loop time: 3.292810
+2 loop time: 3.293048
+3 loop time: 3.289805
+4 loop time: 3.282368
+5 loop time: 3.284874
+6 loop time: 3.288781
+7 loop time: 3.285863
+8 loop time: 3.337965
+9 loop time: 3.284560
+10 loop time: 3.282273
+
+Average loop time: 3.292235
+[32b-g1@intek L4]$ ./50thread.out 
+Insert path to BMP file: /mnt/LRiRP/openMP/BMP/1960
+1 loop time: 3.302629
+2 loop time: 3.286736
+3 loop time: 3.300285
+4 loop time: 3.252647
+5 loop time: 3.298207
+6 loop time: 3.285518
+7 loop time: 3.298458
+8 loop time: 3.285336
+9 loop time: 3.292283
+10 loop time: 3.285792
+
+Average loop time: 3.288789
+
+--------------------
+
+[32b-g1@intek L4]$ ./withoutOMP.out 
+Insert path to BMP file: /mnt/LRiRP/openMP/BMP/1960=200
+1 loop time: 4.491489
+2 loop time: 4.437595
+3 loop time: 4.448303
+4 loop time: 4.450398
+5 loop time: 4.450807
+6 loop time: 4.517099
+7 loop time: 4.434738
+8 loop time: 4.436097
+9 loop time: 4.437304
+10 loop time: 4.433789
+
+Average loop time: 4.453762
+
+[32b-g1@intek L4]$ ./1thread.out 
+Insert path to BMP file: /mnt/LRiRP/openMP/BMP/1960=200
+1 loop time: 5.027826
+2 loop time: 4.945305
+3 loop time: 4.949985
+4 loop time: 4.956621
+5 loop time: 4.951499
+6 loop time: 4.956545
+7 loop time: 4.950412
+8 loop time: 4.950799
+9 loop time: 4.951533
+10 loop time: 4.950610
+
+Average loop time: 4.959113
+[32b-g1@intek L4]$ ./2thread.out 
+Insert path to BMP file: /mnt/LRiRP/openMP/BMP/1960=200
+1 loop time: 12.566489
+2 loop time: 12.540220
+3 loop time: 13.221506
+4 loop time: 13.197265
+5 loop time: 13.161062
+6 loop time: 13.160486
+7 loop time: 13.159579
+8 loop time: 13.159941
+9 loop time: 13.160964
+10 loop time: 12.546671
+
+Average loop time: 12.987418
+[32b-g1@intek L4]$ ./4thread.out 
+Insert path to BMP file: /mnt/LRiRP/openMP/BMP/1960=200
+1 loop time: 13.329707
+2 loop time: 13.277541
+3 loop time: 13.256257
+4 loop time: 13.258890
+5 loop time: 13.249854
+6 loop time: 13.252882
+7 loop time: 13.238364
+8 loop time: 13.280411
+9 loop time: 13.278372
+10 loop time: 13.275612
+
+Average loop time: 13.269789
+[32b-g1@intek L4]$ ./10thread.out 
+Insert path to BMP file: /mnt/LRiRP/openMP/BMP/1960=200
+1 loop time: 13.189737
+2 loop time: 13.162919
+3 loop time: 13.136906
+4 loop time: 13.144628
+5 loop time: 13.127992
+6 loop time: 13.131598
+7 loop time: 13.161673
+8 loop time: 13.165377
+9 loop time: 13.118483
+10 loop time: 13.130584
+
+Average loop time: 13.146990
+[32b-g1@intek L4]$ ./50thread.out 
+Insert path to BMP file: /mnt/LRiRP/openMP/BMP/1960=200
+1 loop time: 13.216044
+2 loop time: 13.170105
+3 loop time: 13.174730
+4 loop time: 13.158585
+5 loop time: 13.131999
+6 loop time: 13.173497
+7 loop time: 13.165484
+8 loop time: 13.172103
+9 loop time: 13.136647
+10 loop time: 13.171609
+
+Average loop time: 13.167080
+
+
+
+
+yakdaw@yakdaw-ubuntu:~/Desktop/PRiR/PRiR/Lista 3$ ./a.out 
+Insert path to BMP file: ./obrazy/1960
+Picture width: 5184
+Picture height: 3456
+Pixels number: 17915904
+
+Complete time: 3.625933
+yakdaw@yakdaw-ubuntu:~/Desktop/PRiR/PRiR/Lista 3$ ./a.out 
+Insert path to BMP file: ./obrazy/2376
+Picture width: 5184
+Picture height: 3456
+Pixels number: 17915904
+
+Complete time: 3.229741
+
+
