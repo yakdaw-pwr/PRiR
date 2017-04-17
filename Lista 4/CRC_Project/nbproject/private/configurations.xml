@@ -13,6 +13,8 @@
         <gdb_interceptlist>
           <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
         </gdb_interceptlist>
+        <gdb_signals>
+        </gdb_signals>
         <gdb_options>
           <DebugOptions>
           </DebugOptions>
@@ -27,13 +29,13 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" </runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" ObliCz 12312 32</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" ObliCz 12312 16</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" ObliCz 1 16</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 4c11db70a</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 4c11db70</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" testuj fffffff1</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" ObliCz 12312 16</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 4c11db70</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" testuj fffffff1</runcommand>
+        <runcommand>"${OUTPUT_PATH}" testuj 4c11db70</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

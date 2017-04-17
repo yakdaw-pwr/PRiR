@@ -31,6 +31,7 @@ long binaryStringToDecimal(char* binaryS);
 void convertStringToUppercase(char* hexS);
 
 long power(long base, int exp);
+char* convertDecimalToBinary(long int num);
 
 int main(int argc, char** argv) {
 
@@ -62,7 +63,8 @@ int main(int argc, char** argv) {
         char* hexCrc = convertBinaryToHex(calculatedCRC);
 
         printf("Wartosc CRC: %s\n", hexCrc);
-    } else if (strcasecmp(argv[1], "TESTUJ") == 0) {
+    } 
+    else if (strcasecmp(argv[1], "TESTUJ") == 0) {
         // SPRAWDZIĆ ARGUMENTY I TESTOWANIE CRC ZROBIC
         if (argc != 3) {
 
@@ -77,33 +79,30 @@ int main(int argc, char** argv) {
             return (1);
         }
 
-        //        1. Sprawdzić ile bitów znaczacych ma ten podany string pzrez użytkownika
-        //        2. Jeżeli 33+ to chuj, na pewno żaden z CRC naszych to nie był (w sumie powinno odrzucić w momencie podawania przez użytkownika stringa)
-        //        3. Jeżeli 17+ bitow to CRC-32 bedzie na 100%
-        //        4. Jeżeli 13+ to generuj liczby -MAXINT +MAXINT i sprawdzaj CRC-32 i CRC-16
-        //        5. Jeżeli 12 i mniej to generuj liczby -MAXINT +MAXINT i sprawdzaj CRC-32 CRC-16 CRC-12
-
         char *binaryData;
         char *crcValue;
 
         convertStringToUppercase(crcHex);
         binaryData = convertHexToBinary(crcHex);
-
-        // TEMP
-        long decimal = binaryStringToDecimal(binaryData);
-        printf("Decimal %ld\n", decimal);
-
-
-        //        printf("String: %s\n", str);
-
-        //        #pragma omp parallel sections
-        //        {
-        //            
-        //        }
-
-        //        validateMeaningfulBytesCount(meaningfulBytesCount);
-
-    } else {
+  
+        int ble = testCrc(binaryData, 12);
+        
+        printf("\n\nRETURN: %d\n\n", ble);
+        
+//        char* plpl = (char*)malloc(sizeof(char) * 32);
+//        char* j = (char*)malloc(sizeof(char) * 32);
+//        
+//        plpl = convertDecimalToBinary(3);
+//        
+//        j = MakeCRC("110", 16);
+//
+//        printf("1: %s\n", plpl);
+//        printf("2: %s\n", j);
+//        
+//        printf("1: %s\n", convertBinaryToHex(plpl));
+//        printf("2: %s\n", convertBinaryToHex(j));
+    } 
+    else {
         fprintf(stderr, "Zly pierwszy argument wywolania programu.\n"
                 "Przewidziane mozliwosci: oblicz/testuj\n");
         return (1);
@@ -112,21 +111,36 @@ int main(int argc, char** argv) {
     return (EXIT_SUCCESS);
 }
 
-int testCrc(char* binaryString, int crcNumber) {
+int testCrc(char* crcString, int crcNumber) {
     // > 4294967295 out
     // > 65535 32
     // > 4095 16 32
     long maxCrcValue = power(2, crcNumber);
-    long decimalValue = binaryStringToDecimal(binaryString);
+    long decimalCrcValue = binaryStringToDecimal(crcString);
 
-    if (maxCrcValue <= decimalValue) {
+    if (maxCrcValue <= decimalCrcValue) {
         return -1;
     }
 
-    long i;
+    long int i;
     for (i = 0; i < maxCrcValue; i++) {
-
+        char* binaryString = convertDecimalToBinary(i);
+        char* crcValue = MakeCRC(binaryString, crcNumber);
+        
+            printf("%s != %s\n", convertBinaryToHex(crcValue),
+                    convertBinaryToHex(crcString));
+        
+        if (convertBinaryToHex(crcValue) == convertBinaryToHex(crcString)) {
+            printf("%s == %s", convertBinaryToHex(crcValue),
+                    convertBinaryToHex(crcString));
+            return 1;
+        }
+        
+        free(binaryString);
+        free(crcValue);
     }
+    
+    return -1;
 }
 
 long power(long base, int exp) {
@@ -142,6 +156,26 @@ long power(long base, int exp) {
     }
 
     return result;
+}
+
+char* convertDecimalToBinary(long int num) // Function Definition
+{
+    long int rem[32], i = 0, length = 0;
+
+    while (num > 0) {
+        rem[i] = num % 2;
+        num = num / 2;
+        i++;
+        length++;
+    }
+
+    char* str = (char*)malloc(sizeof(char)*32);
+    
+    for (i = length - 1; i >= 0; i--) {
+        sprintf(str + strlen(str), "%ld", rem[i]);
+    }
+    
+    return str;
 }
 
 long binaryStringToDecimal(char* binaryS) {
