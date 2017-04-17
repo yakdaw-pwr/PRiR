@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   main.c
  * Author: yakdaw
  *
@@ -25,6 +25,8 @@ char* reverseString(char *str);
 char* convertHexToBinary(const char *hexString);
 char* convertBinaryToHex(const char *binaryString);
 
+int strlstchar(const char *str, const char ch);
+
 int main(int argc, char** argv) {
 
     if (argc < 2) {
@@ -41,31 +43,50 @@ int main(int argc, char** argv) {
 
         char* hexData = argv[2];
         if (checkIfHexValue(hexData) != 0) {
-            fprintf(stderr, "Dane argumentu 2 powinny byc liczba heksadecymalna");
+            fprintf(stderr, "Dane argumentu 2 powinny byc liczba heksadecymalna\n");
             return (1);
         }
 
         int crcVersion = checkCrcVersion(argv[3]);
         if (crcVersion == -1) {
-            fprintf(stderr, "Bledna wartosc wersji CRC. Mozliwosci: 12/16/32");
+            fprintf(stderr, "Bledna wartosc wersji CRC. Mozliwosci: 12/16/32\n");
             return (1);
         }
 
         char* calculatedCRC = MakeCRC(convertHexToBinary(hexData), crcVersion);
         char* hexCrc = convertBinaryToHex(calculatedCRC);
-        
+
         printf("Wartosc CRC: %s\n", hexCrc);
-    }
-    else if (strcasecmp(argv[1], "TESTUJ") == 0) {
+    } else if (strcasecmp(argv[1], "TESTUJ") == 0) {
         // SPRAWDZIĆ ARGUMENTY I TESTOWANIE CRC ZROBIC
-    }
-    else {
+        if (argc != 3) {
+
+            return 1;
+            fprintf(stderr, "Bledna ilosc parametrow dla funkcji OBLICZ.\n");
+        }
+
+        char* crcHex = argv[2];
+        if (checkIfHexValue(crcHex) != 0 || strlen(crcHex) != 8) {
+            fprintf(stderr, "Dane argumentu 2 powinny byc 32-bitowa "
+                    "liczba zakodowana heksadecymalnie\n");
+            return (1);
+        }
+        char *binaryData;
+        char *crcValue;
+        binaryData = convertHexToBinary(crcHex);
+        int a = strlstchar(binaryData, '1');
+    } else {
         fprintf(stderr, "Zly pierwszy argument wywolania programu.\n"
                 "Przewidziane mozliwosci: oblicz/testuj\n");
         return (1);
     }
 
     return (EXIT_SUCCESS);
+}
+
+int strlstchar(const char *str, const char ch) {
+    char *chptr = strrchr(str, ch);
+    return chptr - str + 1;
 }
 
 int checkIfHexValue(char* s) {
@@ -88,9 +109,11 @@ char *MakeCRC(char *BitString, int crcNumber) {
     char* Res = (char*) malloc(sizeof (char) * (crcNumber + 1));
     char* CRC = (char*) malloc(sizeof (char) * crcNumber);
 
+    int i, j;
+
     char* polynomial;
-    
-    switch(crcNumber) {
+
+    switch (crcNumber) {
         case 12:
             polynomial = "100000001111";
             break;
@@ -107,14 +130,14 @@ char *MakeCRC(char *BitString, int crcNumber) {
 
     char DoInvert;
 
-    for (int i = 0; i < crcNumber; ++i) {
+    for (i = 0; i < crcNumber; ++i) {
         CRC[i] = 0;
     }
 
-    for (int i = 0; i < strlen(BitString); ++i) {
+    for (i = 0; i < strlen(BitString); ++i) {
         DoInvert = ('1' == BitString[i]) ^ CRC[crcNumber - 1];
 
-        for (int j = crcNumber - 1; j > 0; j--) {
+        for (j = crcNumber - 1; j > 0; j--) {
             if (polynomial[j] == '1') {
                 CRC[j] = CRC[j - 1] ^ DoInvert;
             } else {
@@ -127,7 +150,7 @@ char *MakeCRC(char *BitString, int crcNumber) {
         }
     }
 
-    for (int i = 0; i < crcNumber; ++i) {
+    for (i = 0; i < crcNumber; ++i) {
         Res[(crcNumber - 1) - i] = CRC[i] ? '1' : '0';
     }
 
@@ -147,6 +170,7 @@ char* reverseString(char *str) {
 }
 
 char* convertHexToBinary(const char *hexString) {
+    int i, j;
     char *hexDigitToBinary[16] = {
         "0000", "0001", "0010", "0011", "0100", "0101",
         "0110", "0111", "1000", "1001", "1010", "1011",
@@ -158,8 +182,8 @@ char* convertHexToBinary(const char *hexString) {
 
     char* binaryNumber = (char*) malloc((strlen(hexString)*4 + 1));
 
-    for (int i = 0; hexString[i] != '\0'; i++) {
-        for (int j = 0; j < 16; j++) {
+    for (i = 0; hexString[i] != '\0'; i++) {
+        for (j = 0; j < 16; j++) {
             if (hexString[i] == hexDigits[j]) {
                 strcat(binaryNumber, hexDigitToBinary[j]);
             }
@@ -171,7 +195,7 @@ char* convertHexToBinary(const char *hexString) {
 
 char* convertBinaryToHex(const char *binaryString) {
     int value = (int) strtol(binaryString, NULL, 2);
-    char* hexString = (char*)malloc(sizeof(char) * (strlen(binaryString)/4));
+    char* hexString = (char*) malloc(sizeof (char) * (strlen(binaryString) / 4));
 
     sprintf(hexString, "%x", value);
 
