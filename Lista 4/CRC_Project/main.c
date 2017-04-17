@@ -25,6 +25,11 @@ char* reverseString(char *str);
 char* convertHexToBinary(const char *hexString);
 char* convertBinaryToHex(const char *binaryString);
 
+int strlstchar(const char *str, const char ch) {
+    char *chptr = strrchr(str, ch);
+    return chptr - str + 1;
+}
+
 int main(int argc, char** argv) {
 
     if (argc < 2) {
@@ -57,6 +62,32 @@ int main(int argc, char** argv) {
         printf("Wartosc CRC: %s\n", hexCrc);
     } else if (strcasecmp(argv[1], "TESTUJ") == 0) {
         // SPRAWDZIĆ ARGUMENTY I TESTOWANIE CRC ZROBIC
+
+        if (argc != 3) {
+            fprintf(stderr, "Bledna ilosc parametrow dla funkcji OBLICZ.\n");
+            return 1;
+        }
+
+        char* hexData = argv[2];
+        if (checkIfHexValue(hexData) != 0) {
+            fprintf(stderr, "Dane argumentu 2 powinny byc liczba heksadecymalna");
+            return (1);
+        }
+
+        char *binaryData;
+        char *crcValue;
+        binaryData = convertHexToBinary(hexData);
+        int a = strlstchar(binaryData, '1');
+        int b = strlstchar("01110", '1');
+        int c = strlstchar("00110", '1');
+
+
+        //Old code
+
+
+
+
+
     } else {
         fprintf(stderr, "Zly pierwszy argument wywolania programu.\n"
                 "Przewidziane mozliwosci: oblicz/testuj\n");
