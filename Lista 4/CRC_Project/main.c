@@ -277,8 +277,9 @@ char* convertBinaryToHex(const char *binaryString) {
     return hexString;
 }
 
-void convertStringToUppercase(char* hexS) {  
-    for (int i = 0; hexS[i]; i++) {  
-        hexS[i] = toupper(hexS[i]);  
-    }  
-} 
+void convertStringToUppercase(char* hexS) {
+    int i;
+    for (i = 0; hexS[i]; i++) {
+        hexS[i] = toupper(hexS[i]);
+    }
+}
