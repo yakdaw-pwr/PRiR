@@ -115,11 +115,28 @@ int testujCRC(char *binaryData) {
     } else if (meaningfulBytesCount > 16) {
         return CRC32;
     } else if (meaningfulBytesCount > 12) {
-        return checkCRC(integerFormat);
+        return checkCRCTopTwo(integerFormat);
+    } else if (meaningfulBytesCount > 8) {
+        return checkCRCTopThree(integerFormat);
+
     }
 }
 
-int checkCRC(int integerFormat) {
+int checkCRCTopTwo(int integerFormat) {
+    int i;
+
+    for (i = 0; i < 2^32; i++) {
+        if (i == integerFormat && i < 2^16) {
+            return CRC16;
+        } else if (i == integerFormat) {
+            return CRC32;
+        }
+    }
+    return noCRC;
+    //    printf("%d\n", strtol(b, &tmp, 2));
+}
+
+int checkCRCTopThree(int integerFormat) {
     int i;
 
     for (i = 0; i < 2^32; i++) {
