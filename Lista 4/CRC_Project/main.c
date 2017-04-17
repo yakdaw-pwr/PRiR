@@ -16,6 +16,8 @@
 #include <strings.h>
 #include <string.h>
 #include <ctype.h>
+#include<time.h>
+
 
 const int CRC12 = 12000;
 const int CRC16 = 16000;
@@ -92,9 +94,14 @@ int main(int argc, char** argv) {
 
         //        binaryStringToInt(binaryData);
 
-
+        double timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
         int result = testujCRC(binaryData);
-        printf("Wynik %d", result);
+        double finishTime = clock() / (CLOCKS_PER_SEC / 1000000);
+
+        double completeTime = (finishTime - timeStart) / 1000000;
+
+
+        printf("Wynik %d, czas: %.6lf", result, completeTime);
         return (1);
 
 
