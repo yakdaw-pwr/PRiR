@@ -16,6 +16,12 @@
 #include <strings.h>
 #include <string.h>
 
+const int CRC8 = 8000;
+const int CRC12 = 12000;
+const int CRC16 = 16000;
+const int CRC32 = 32000;
+const int noCRC = 99999;
+
 int checkIfHexValue(char* s);
 int checkCrcVersion(char* s);
 
@@ -71,10 +77,26 @@ int main(int argc, char** argv) {
                     "liczba zakodowana heksadecymalnie\n");
             return (1);
         }
+
+        //        1. Sprawdzić ile bitów znaczacych ma ten podany string pzrez użytkownika
+        //        2. Jeżeli 33+ to chuj, na pewno żaden z CRC naszych to nie był (w sumie powinno odrzucić w momencie podawania przez użytkownika stringa)
+        //        3. Jeżeli 17+ bitow to CRC-32 bedzie na 100%
+        //        4. Jeżeli 13+ to generuj liczby -MAXINT +MAXINT i sprawdzaj CRC-32 i CRC-16
+        //        5. Jeżeli 12 i mniej to generuj liczby -MAXINT +MAXINT i sprawdzaj CRC-32 CRC-16 CRC-12
+
         char *binaryData;
         char *crcValue;
         binaryData = convertHexToBinary(crcHex);
-        int a = strlstchar(binaryData, '1');
+        int meaningfulBytesCount = strlstchar(binaryData, '1');
+
+        //        binaryStringToInt(binaryData);
+
+
+        int result = testujCRC(binaryData);
+        printf("Wynik %d", result);
+        return (1);
+
+
     } else {
         fprintf(stderr, "Zly pierwszy argument wywolania programu.\n"
                 "Przewidziane mozliwosci: oblicz/testuj\n");
@@ -82,6 +104,40 @@ int main(int argc, char** argv) {
     }
 
     return (EXIT_SUCCESS);
+}
+
+int testujCRC(char *binaryData) {
+    int meaningfulBytesCount = strlstchar(binaryData, '1');
+    int integerFormat = binaryStringToInt(binaryData);
+
+    if (meaningfulBytesCount > 32) {
+        return noCRC;
+    } else if (meaningfulBytesCount > 16) {
+        return CRC32;
+    } else if (meaningfulBytesCount > 12) {
+        return checkCRC(integerFormat);
+    }
+}
+
+int checkCRC(int integerFormat) {
+    int i;
+
+    for (i = 0; i < 2^32; i++) {
+        if (i == integerFormat && i < 2^16) {
+            return CRC16;
+        } else if (i == integerFormat) {
+            return CRC32;
+        }
+    }
+    return noCRC;
+    //    printf("%d\n", strtol(b, &tmp, 2));
+}
+
+int binaryStringToInt(char* binaryS) {
+    char *tmp;
+    int integerFormat = strtoul(binaryS, &tmp, 2);
+    return integerFormat;
+    //    printf("%d\n", strtol(binaryS, &tmp, 2));
 }
 
 int strlstchar(const char *str, const char ch) {
