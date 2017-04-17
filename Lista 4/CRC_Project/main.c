@@ -82,25 +82,12 @@ int main(int argc, char** argv) {
         char *binaryData;
         char *crcValue;
 
+        // Convert to binary
         convertStringToUppercase(crcHex);
         binaryData = convertHexToBinary(crcHex);
   
+        // Test CRC algorithms
         int ble = testCrc(binaryData, 12);
-        
-        printf("\n\nRETURN: %d\n\n", ble);
-        
-//        char* plpl = (char*)malloc(sizeof(char) * 32);
-//        char* j = (char*)malloc(sizeof(char) * 32);
-//        
-//        plpl = convertDecimalToBinary(3);
-//        
-//        j = MakeCRC("110", 16);
-//
-//        printf("1: %s\n", plpl);
-//        printf("2: %s\n", j);
-//        
-//        printf("1: %s\n", convertBinaryToHex(plpl));
-//        printf("2: %s\n", convertBinaryToHex(j));
     } 
     else {
         fprintf(stderr, "Zly pierwszy argument wywolania programu.\n"
@@ -112,16 +99,15 @@ int main(int argc, char** argv) {
 }
 
 int testCrc(char* crcString, int crcNumber) {
-    // > 4294967295 out
-    // > 65535 32
-    // > 4095 16 32
     long maxCrcValue = power(2, crcNumber);
     long decimalCrcValue = binaryStringToDecimal(crcString);
 
+    // If value higher than CRC can generate
     if (maxCrcValue <= decimalCrcValue) {
         return -1;
     }
 
+    // Generate CRC for decimal values
     long int i;
     for (i = 0; i < maxCrcValue; i++) {
         char* binaryString = convertDecimalToBinary(i);
