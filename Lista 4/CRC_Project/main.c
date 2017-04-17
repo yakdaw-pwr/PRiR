@@ -28,6 +28,7 @@ int checkIfHexValue(char* s);
 int checkCrcVersion(char* s);
 
 char *MakeCRC(char *BitString, int crcNumber);
+int testujCRC(char *binaryData);
 
 char* reverseString(char *str);
 char* convertHexToBinary(const char *hexString);
