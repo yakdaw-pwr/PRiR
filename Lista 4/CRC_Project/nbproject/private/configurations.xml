@@ -33,11 +33,11 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 99B70000</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" testuj BFA12345</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 0000159F</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 0000FBE1</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 0001FFF2</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 00000BA1</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" testuj 0000FBE1</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" testuj 00000BA1</runcommand>
+        <runcommand>"${OUTPUT_PATH}" testuj 0000FBE1</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>

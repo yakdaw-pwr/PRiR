@@ -6,7 +6,7 @@
 
 /*
  * File:   main.c
- * Author: yakdaw
+ * Author: Kamil Buczel & Jacek Arciszewski
  *
  * Created on April 7, 2017, 6:56 PM
  */
@@ -16,12 +16,12 @@
 #include <strings.h>
 #include <string.h>
 #include <ctype.h>
-#include<time.h>
+#include <time.h>
+#include <math.h>
 
-
-const int CRC12 = 12000;
-const int CRC16 = 16000;
-const int CRC32 = 32000;
+const int CRC12 = 12;
+const int CRC16 = 16;
+const int CRC32 = 32;
 const int noCRC = 99999;
 
 int checkIfHexValue(char* s);
@@ -98,8 +98,11 @@ int main(int argc, char** argv) {
 
         double completeTime = (finishTime - timeStart) / 1000000;
 
-
-        printf("Wynik %d, czas: %.6lf", result, completeTime);
+        if (result == noCRC) {
+            printf("Nieprawidlowe CRC, czas: %.6lf", completeTime);
+        } else {
+            printf("Wartosc CRC: %d, czas: %.6lf", result, completeTime);
+        }
         return (1);
 
 
