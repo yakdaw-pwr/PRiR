@@ -25,10 +25,7 @@ char* reverseString(char *str);
 char* convertHexToBinary(const char *hexString);
 char* convertBinaryToHex(const char *binaryString);
 
-int strlstchar(const char *str, const char ch) {
-    char *chptr = strrchr(str, ch);
-    return chptr - str + 1;
-}
+int strlstchar(const char *str, const char ch);
 
 int main(int argc, char** argv) {
 
@@ -76,7 +73,7 @@ int main(int argc, char** argv) {
         }
         char *binaryData;
         char *crcValue;
-        binaryData = convertHexToBinary(hexData);
+        binaryData = convertHexToBinary(crcHex);
         int a = strlstchar(binaryData, '1');
     } else {
         fprintf(stderr, "Zly pierwszy argument wywolania programu.\n"
@@ -85,6 +82,11 @@ int main(int argc, char** argv) {
     }
 
     return (EXIT_SUCCESS);
+}
+
+int strlstchar(const char *str, const char ch) {
+    char *chptr = strrchr(str, ch);
+    return chptr - str + 1;
 }
 
 int checkIfHexValue(char* s) {
