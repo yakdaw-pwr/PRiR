@@ -87,14 +87,10 @@ int main(int argc, char** argv) {
         convertStringToUppercase(crcHex);
 
         char *binaryData;
+
         char *crcValue;
         binaryData = convertHexToBinary(crcHex);
-        //reverse for little endenddeeedt
-        binaryData = reverseString(binaryData);
 
-        int meaningfulBytesCount = strlstchar(binaryData, '1');
-
-        //        binaryStringToInt(binaryData);
 
         double timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
         int result = testujCRC(binaryData);
@@ -117,6 +113,11 @@ int main(int argc, char** argv) {
 }
 
 int testujCRC(char *binaryData) {
+    long endOfCRC12 = pow(2, 12);
+    long endOfCRC16 = pow(2, 16);
+    long endOfCRC32 = pow(2, 32);
+
+    int answer;
 
     //BFA12345
     //0001FFF2
@@ -124,36 +125,55 @@ int testujCRC(char *binaryData) {
     //0000159F
     //00000BA1
     //00000001
-    int meaningfulBytesCount = strlstchar(binaryData, '1');
+
+    //odwrocenie binarki do malej endenty czy jak to sie tam nazywa
+    //wylcizanie bitow znaczacych jest od lewej nie od prawej, dlatego
+    //wazne jest by odwrocic, robione na temp zeby pozniej nie zaklamac
+    //wyniku przy konwersji do inta
+    char *reversedBinaryData;
+    reversedBinaryData = reverseString(binaryData);
+    int meaningfulBytesCount = strlstchar(reversedBinaryData, '1');
+
     long integerFormat = binaryStringToInt(binaryData);
     long i, j, k;
 
     if (meaningfulBytesCount > 32) {
-        return noCRC;
+        answer = noCRC;
     } else if (meaningfulBytesCount > 16) {
-        return CRC32;
+        answer = CRC32;
     } else {
-        //CRC12
-        long endOfCRC12 = pow(2, 12);
-        for (i = 0; i < endOfCRC12; i++) {
-            if (i == integerFormat)
-                return CRC12;
-        }
-
-        //CRC16
-        long endOfCRC16 = pow(2, 16);
-        for (j = endOfCRC12; j < endOfCRC16; j++) {
-            if (i == integerFormat)
-                return CRC16;
-        }
-
-        //CRC32
-        long endOfCRC32 = pow(2, 32);
-        for (k = endOfCRC16; k < endOfCRC32; k++) {
-            if (i == integerFormat)
-                return CRC32;
+#pragma omp parallel num_threads(3)
+        {
+#pragma omp sections
+            {
+#pragma omp section
+                {
+                    //CRC12
+                    for (i = 0; i < endOfCRC12; i++) {
+                        if (i == integerFormat)
+                            answer = CRC12;
+                    }
+                }
+#pragma omp section
+                {
+                    //CRC16
+                    for (j = endOfCRC12; j < endOfCRC16; j++) {
+                        if (j == integerFormat)
+                            answer = CRC16;
+                    }
+                }
+#pragma omp section
+                {
+                    //CRC32
+                    for (k = endOfCRC16; k < endOfCRC32; k++) {
+                        if (k == integerFormat)
+                            answer = CRC32;
+                    }
+                }
+            }
         }
     }
+    return answer;
 }
 
 int checkCRCTopTwo(int integerFormat) {
