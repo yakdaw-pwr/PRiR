@@ -117,7 +117,7 @@ int testujCRC(char *binaryData) {
     long endOfCRC16 = pow(2, 16);
     long endOfCRC32 = pow(2, 32);
 
-    int answer;
+    int answer = noCRC;
 
     //BFA12345
     //0001FFF2
@@ -150,24 +150,25 @@ int testujCRC(char *binaryData) {
                 {
                     //CRC12
                     for (i = 0; i < endOfCRC12; i++) {
-                        if (i == integerFormat)
-                            answer = CRC12;
+                        if (i == integerFormat) answer = CRC12;
+                        if (answer != noCRC) break;
                     }
                 }
 #pragma omp section
                 {
                     //CRC16
                     for (j = endOfCRC12; j < endOfCRC16; j++) {
-                        if (j == integerFormat)
-                            answer = CRC16;
+                        if (j == integerFormat) answer = CRC16;
+                        if (answer != noCRC) break;
+
                     }
                 }
 #pragma omp section
                 {
                     //CRC32
                     for (k = endOfCRC16; k < endOfCRC32; k++) {
-                        if (k == integerFormat)
-                            answer = CRC32;
+                        if (k == integerFormat) answer = CRC32;
+                        if (answer != noCRC) break;
                     }
                 }
             }
