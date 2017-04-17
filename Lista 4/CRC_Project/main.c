@@ -86,6 +86,7 @@ int main(int argc, char** argv) {
         }
 
         convertStringToUppercase(crcHex);
+        printf("Hex: %s\n", crcHex);
 
         char *binaryData;
 
@@ -100,9 +101,9 @@ int main(int argc, char** argv) {
         double completeTime = (finishTime - timeStart) / 1000000;
 
         if (result == noCRC) {
-            printf("Nieprawidlowe CRC, czas: %.6lf\n", completeTime);
+            printf("Nieprawidlowe CRC, czas: %.6lf s\n", completeTime);
         } else {
-            printf("Wartosc CRC: %d, czas: %.6lf\n", result, completeTime);
+            printf("Wartosc CRC: %d, czas: %.6lf s\n", result, completeTime);
         }
         return (1);
 
