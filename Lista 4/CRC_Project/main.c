@@ -83,10 +83,10 @@ int main(int argc, char** argv) {
         binaryData = convertHexToBinary(crcHex);
         int meaningfulBytesCount = strlstchar(binaryData, '1');
 
-        binaryStringToInt(binaryData);
+        //        binaryStringToInt(binaryData);
 
 
-        validateMeaningfulBytesCount(meaningfulBytesCount);
+        validateMeaningfulBytesCount(binaryData);
 
     } else {
         fprintf(stderr, "Zly pierwszy argument wywolania programu.\n"
@@ -97,60 +97,39 @@ int main(int argc, char** argv) {
     return (EXIT_SUCCESS);
 }
 
-int validateMeaningfulBytesCount(int meaningfulBytesCount) {
+int validateMeaningfulBytesCount(char *binaryData) {
+    int meaningfulBytesCount = strlstchar(binaryData, '1');
+    int integerFormat = binaryStringToInt(binaryData);
+
     if (meaningfulBytesCount > 32) {
         return 0;
     } else if (meaningfulBytesCount > 16) {
         return 1;
     } else if (meaningfulBytesCount > 12) {
-        checkCRC();
+        checkCRC(integerFormat);
     }
 }
-#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
-#define BYTE_TO_BINARY(byte)  \
-  (byte & 0x80 ? '1' : '0'), \
-  (byte & 0x40 ? '1' : '0'), \
-  (byte & 0x20 ? '1' : '0'), \
-  (byte & 0x10 ? '1' : '0'), \
-  (byte & 0x08 ? '1' : '0'), \
-  (byte & 0x04 ? '1' : '0'), \
-  (byte & 0x02 ? '1' : '0'), \
-  (byte & 0x01 ? '1' : '0')
 
-const char *byte_to_binary(int x) {
-    static char b[9];
-    b[0] = '\0';
+int checkCRC(int integerFormat) {
+    int i;
 
-    int z;
-    for (z = 128; z > 0; z >>= 1) {
-        strcat(b, ((x & z) == z) ? "1" : "0");
+    for (i = 0; i < 2^32; i++) {
+        if (i == integerFormat && i < 2^16) {
+            return 0;
+        } else if (i == integerFormat) {
+            return 1;
+        }
     }
 
-    return b;
-}
-
-void checkCRC() {
-
-    unsigned char bytes[4];
-    unsigned long n = 175;
-
-    bytes[0] = (n >> 24) & 0xFF;
-    bytes[1] = (n >> 16) & 0xFF;
-    bytes[2] = (n >> 8) & 0xFF;
-    bytes[3] = n & 0xFF;
-
-    char *tmp;
-    char *b = "0101";
-
-
+    return -1;
     //    printf("%d\n", strtol(b, &tmp, 2));
 }
 
-void binaryStringToInt(char* binaryS) {
+int binaryStringToInt(char* binaryS) {
     char *tmp;
-
-    int integer = strtol(binaryS, &tmp, 2);
-    printf("%d\n", strtol(binaryS, &tmp, 2));
+    int integerFormat = strtol(binaryS, &tmp, 2);
+    return integerFormat;
+    //    printf("%d\n", strtol(binaryS, &tmp, 2));
 }
 
 int strlstchar(const char *str, const char ch) {
