@@ -36,6 +36,8 @@ char* convertBinaryToHex(const char *binaryString);
 int strlstchar(const char *str, const char ch);
 void convertStringToUppercase(char* hexS);
 
+long binaryStringToInt(char* binaryS);
+
 int main(int argc, char** argv) {
 
     if (argc < 2) {
@@ -115,18 +117,42 @@ int main(int argc, char** argv) {
 }
 
 int testujCRC(char *binaryData) {
+
+    //BFA12345
+    //0001FFF2
+    //0000FBE1
+    //0000159F
+    //00000BA1
+    //00000001
     int meaningfulBytesCount = strlstchar(binaryData, '1');
-    int integerFormat = binaryStringToInt(binaryData);
+    long integerFormat = binaryStringToInt(binaryData);
+    long i, j, k;
 
     if (meaningfulBytesCount > 32) {
         return noCRC;
     } else if (meaningfulBytesCount > 16) {
         return CRC32;
-    } else if (meaningfulBytesCount > 12) {
-        return checkCRCTopTwo(integerFormat);
-    } else if (meaningfulBytesCount > 8) {
-        return checkCRCAll(integerFormat);
+    } else {
+        //CRC12
+        long endOfCRC12 = pow(2, 12);
+        for (i = 0; i < endOfCRC12; i++) {
+            if (i == integerFormat)
+                return CRC12;
+        }
 
+        //CRC16
+        long endOfCRC16 = pow(2, 16);
+        for (j = endOfCRC12; j < endOfCRC16; j++) {
+            if (i == integerFormat)
+                return CRC16;
+        }
+
+        //CRC32
+        long endOfCRC32 = pow(2, 32);
+        for (k = endOfCRC16; k < endOfCRC32; k++) {
+            if (i == integerFormat)
+                return CRC32;
+        }
     }
 }
 
@@ -137,6 +163,7 @@ int checkCRCTopTwo(int integerFormat) {
         if (i == integerFormat && i < 2^16) {
             return CRC16;
         } else if (i == integerFormat) {
+
             return CRC32;
         }
     }
@@ -152,24 +179,28 @@ int checkCRCAll(int integerFormat) {
         } else if (i == integerFormat && i < 2^16) {
             return CRC16;
         } else if (i == integerFormat) {
+
             return CRC32;
         }
     }
     return noCRC;
 }
 
-int binaryStringToInt(char* binaryS) {
+long binaryStringToInt(char* binaryS) {
     char *tmp;
-    int integerFormat = strtoul(binaryS, &tmp, 2);
+    long integerFormat = strtoul(binaryS, &tmp, 2);
+
     return integerFormat;
 }
 
 int strlstchar(const char *str, const char ch) {
     char *chptr = strrchr(str, ch);
+
     return chptr - str + 1;
 }
 
 int checkIfHexValue(char* s) {
+
     return s[strspn(s, "0123456789abcdefABCDEF")];
 }
 
@@ -181,6 +212,7 @@ int checkCrcVersion(char* s) {
     } else if (strcmp(s, "32") == 0) {
         return 32;
     } else {
+
         return -1;
     }
 }
@@ -243,6 +275,7 @@ char* reverseString(char *str) {
     static int i = 0;
     static char rev[100];
     if (*str) {
+
         reverseString(str + 1);
         rev[i++] = *str;
     }
@@ -265,6 +298,7 @@ char* convertHexToBinary(const char *hexString) {
     for (i = 0; hexString[i] != '\0'; i++) {
         for (j = 0; j < 16; j++) {
             if (hexString[i] == hexDigits[j]) {
+
                 strcat(binaryNumber, hexDigitToBinary[j]);
             }
         }
