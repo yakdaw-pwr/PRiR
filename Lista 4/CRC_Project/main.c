@@ -99,9 +99,9 @@ int main(int argc, char** argv) {
         double completeTime = (finishTime - timeStart) / 1000000;
 
         if (result == noCRC) {
-            printf("Nieprawidlowe CRC, czas: %.6lf", completeTime);
+            printf("Nieprawidlowe CRC, czas: %.6lf\n", completeTime);
         } else {
-            printf("Wartosc CRC: %d, czas: %.6lf", result, completeTime);
+            printf("Wartosc CRC: %d, czas: %.6lf\n", result, completeTime);
         }
         return (1);
 
