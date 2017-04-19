@@ -75,6 +75,8 @@ int main(int argc, char** argv) {
     for (loop = 0; loop < numOfLoops; loop++) {
 //        printf("\nRozpoczynam dzialanie rownolegle:\n\n");
 
+	double parallelStartTime = omp_get_wtime();
+
         #pragma omp parallel for private(p) shared(patternTime) schedule(dynamic, 1)
         for (p = 0; p < numOfPatterns; p++) {
 
@@ -108,6 +110,7 @@ int main(int argc, char** argv) {
 //            printf("--------- %s KONIEC ---------\n", patterns[p]);
         }
 
+	completeTime += (omp_get_wtime() - parallelStartTime);
     }
 
     printf("\n-----------------------------------------\n");
@@ -121,10 +124,9 @@ int main(int argc, char** argv) {
     for (p = 0; p < numOfPatterns; p++) {
         patternTime[p] = patternTime[p] / numOfLoops;
         printf("\"%s\" average processing time: %.12lf s\n", patterns[p], patternTime[p]);
-        completeTime += patternTime[p];
     }
 
-    printf("\nAverage complete time: %.6lf s\n", completeTime);
+    printf("\nAverage complete time: %.6lf s\n", completeTime/numOfLoops);
 
     return (EXIT_SUCCESS);
 }
