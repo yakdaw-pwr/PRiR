@@ -3,82 +3,78 @@
 Podaj sciezke do pliku z tekstem: tekstDlugi
 
 -----------------------------------------
-"ghost" count: 70000
-"exist" count: 490000
-"Hamlet" count: 700000
-"king" count: 210000
+"ghost" count: 700
+"exist" count: 4900
+"Hamlet" count: 7000
+"king" count: 2100
 -----------------------------------------
-"ghost" average processing time: 0.009366223020 s
-"exist" average processing time: 0.011526362658 s
-"Hamlet" average processing time: 0.009344048672 s
-"king" average processing time: 0.009125218531 s
+"ghost" average processing time: 0.009378617844 s
+"exist" average processing time: 0.011565358546 s
+"Hamlet" average processing time: 0.009349112371 s
+"king" average processing time: 0.009139089324 s
 
-Average complete time: 0.039362 s
+Average complete time: 0.039434 s
 [32b-g1@onyx09 Lista6]$ ./a.out 4 ghost exist Hamlet king 2
 Podaj sciezke do pliku z tekstem: tekstDlugi
 
 -----------------------------------------
-"ghost" count: 70000
-"exist" count: 490000
-"Hamlet" count: 700000
-"king" count: 210000
+"ghost" count: 700
+"exist" count: 4900
+"Hamlet" count: 7000
+"king" count: 2100
 -----------------------------------------
-"ghost" average processing time: 0.009474635073 s
-"exist" average processing time: 0.011766044623 s
-"Hamlet" average processing time: 0.009600615045 s
-"king" average processing time: 0.009295965410 s
+"ghost" average processing time: 0.009488083036 s
+"exist" average processing time: 0.011809827625 s
+"Hamlet" average processing time: 0.009608679055 s
+"king" average processing time: 0.009305469915 s
 
-Average complete time: 0.040137 s
+Average complete time: 0.021128 s
 [32b-g1@onyx09 Lista6]$ ./a.out 4 ghost exist Hamlet king 4
 Podaj sciezke do pliku z tekstem: tekstDlugi
 
 -----------------------------------------
-"ghost" count: 70000
-"exist" count: 490000
-"Hamlet" count: 700000
-"king" count: 210000
+"ghost" count: 700
+"exist" count: 4900
+"Hamlet" count: 7000
+"king" count: 2100
 -----------------------------------------
-"ghost" average processing time: 0.009527483191 s
-"exist" average processing time: 0.011934383707 s
-"Hamlet" average processing time: 0.009833491468 s
-"king" average processing time: 0.009444753332 s
+"ghost" average processing time: 0.009543133359 s
+"exist" average processing time: 0.011965233851 s
+"Hamlet" average processing time: 0.009837220781 s
+"king" average processing time: 0.009462666609 s
 
-Average complete time: 0.040740 s
-[32b-g1@onyx09 Lista6]$ ./a.out 2 ghost exist 1
-Podaj sciezke do pliku z tekstem: dlugiTekst
-Blad podczas otwierania pliku.
-: No such file or directory
+Average complete time: 0.011987 s
 [32b-g1@onyx09 Lista6]$ ./a.out 2 ghost exist 1
 Podaj sciezke do pliku z tekstem: tekstDlugi
 
 -----------------------------------------
-"ghost" count: 70000
-"exist" count: 490000
+"ghost" count: 700
+"exist" count: 4900
 -----------------------------------------
-"ghost" average processing time: 0.009365991307 s
-"exist" average processing time: 0.011526101520 s
+"ghost" average processing time: 0.009379956676 s
+"exist" average processing time: 0.011565640303 s
 
-Average complete time: 0.020892 s
+Average complete time: 0.020947 s
 [32b-g1@onyx09 Lista6]$ ./a.out 2 ghost exist 2
 Podaj sciezke do pliku z tekstem: tekstDlugi
 
 -----------------------------------------
-"ghost" count: 70000
-"exist" count: 490000
+"ghost" count: 700
+"exist" count: 4900
 -----------------------------------------
-"ghost" average processing time: 0.009497296968 s
-"exist" average processing time: 0.011664212574 s
+"ghost" average processing time: 0.009535077955 s
+"exist" average processing time: 0.011677481877 s
 
-Average complete time: 0.021162 s
+Average complete time: 0.011690 s
 [32b-g1@onyx09 Lista6]$ ./a.out 2 ghost exist 4
 Podaj sciezke do pliku z tekstem: tekstDlugi
 
 -----------------------------------------
-"ghost" count: 70000
-"exist" count: 490000
+"ghost" count: 700
+"exist" count: 4900
 -----------------------------------------
-"ghost" average processing time: 0.009511107742 s
-"exist" average processing time: 0.011640326469 s
+"ghost" average processing time: 0.009512380892 s
+"exist" average processing time: 0.011681005969 s
 
-Average complete time: 0.021151 s
+Average complete time: 0.011704 s
 
