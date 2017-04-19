@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
     printf("\n-----------------------------------------\n");
     
     for (p = 0; p < numOfPatterns; p++) {
-        printf("\"%s\" count: %d\n", patterns[p], patternCount[p]);
+        printf("\"%s\" count: %d\n", patterns[p], patternCount[p]/numOfLoops);
     }
     
     printf("-----------------------------------------\n");
