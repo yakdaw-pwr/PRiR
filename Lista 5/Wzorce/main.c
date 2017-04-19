@@ -56,6 +56,9 @@ int main(int argc, char** argv) {
 
     // Inicjowanie tablicy czasow dla kazdego wzorca
     double* patternTime = (double*) malloc(sizeof (double) * numOfPatterns);
+    for (p = 0; p < numOfPatterns; p++) {
+        patternTime[p] = 0;
+    }
     double completeTime;
     
     int* patternCount = (int*)malloc(sizeof(int) * numOfPatterns);
@@ -65,40 +68,46 @@ int main(int argc, char** argv) {
     
     // Ustawienie ilosci watkow na ktorych dziala program
     omp_set_num_threads(numOfThreads);
- 
-    printf("\nRozpoczynam dzialanie rownolegle:\n\n");
-    
-    #pragma omp parallel for private(p) shared(patternTime) schedule(dynamic, 1)
-    for (p = 0; p < numOfPatterns; p++) {
 
-        double timeStart;
-        double timeFinish;
+    int numOfLoops = 100;
+    int loop;
 
-        int patternLength = strlen(patterns[p]);
+    for (loop = 0; loop < numOfLoops; loop++) {
+//        printf("\nRozpoczynam dzialanie rownolegle:\n\n");
 
-        int m, n, i, j;
-        n = fileLength;
-        m = patternLength;
+        #pragma omp parallel for private(p) shared(patternTime) schedule(dynamic, 1)
+        for (p = 0; p < numOfPatterns; p++) {
 
-        printf("--------- %s START --------- Watek: %d \n", 
-                patterns[p], omp_get_thread_num());
-        timeStart = omp_get_wtime();
+            double timeStart;
+            double timeFinish;
 
-        for (i = 0; i < n - m; i++) {
-            j = 0;
-            while ((j < m) && (patterns[p][j] == text[i + j])) {
-                j++;
+            int patternLength = strlen(patterns[p]);
+
+            int m, n, i, j;
+            n = fileLength;
+            m = patternLength;
+
+//            printf("--------- %s START --------- Watek: %d \n",
+//                    patterns[p], omp_get_thread_num());
+            timeStart = omp_get_wtime();
+
+            for (i = 0; i < n - m; i++) {
+                j = 0;
+                while ((j < m) && (patterns[p][j] == text[i + j])) {
+                    j++;
+                }
+                if (j == m) {
+                    patternCount[p]++;
+                }
             }
-            if (j == m) {
-                patternCount[p]++;
-            }
+
+            timeFinish = omp_get_wtime();
+
+            patternTime[p] += (timeFinish - timeStart);
+
+//            printf("--------- %s KONIEC ---------\n", patterns[p]);
         }
 
-        timeFinish = omp_get_wtime();
-        
-        patternTime[p] = timeFinish - timeStart;
-
-        printf("--------- %s KONIEC ---------\n", patterns[p]);
     }
 
     printf("\n-----------------------------------------\n");
@@ -110,11 +119,12 @@ int main(int argc, char** argv) {
     printf("-----------------------------------------\n");
     
     for (p = 0; p < numOfPatterns; p++) {
-        printf("\"%s\" processing time: %.12lf s\n", patterns[p], patternTime[p]);
+        patternTime[p] = patternTime[p] / numOfLoops;
+        printf("\"%s\" average processing time: %.12lf s\n", patterns[p], patternTime[p]);
         completeTime += patternTime[p];
     }
 
-    printf("\nComplete time: %.6lf s\n", completeTime);
+    printf("\nAverage complete time: %.6lf s\n", completeTime);
 
     return (EXIT_SUCCESS);
 }
