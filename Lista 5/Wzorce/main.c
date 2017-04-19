@@ -12,6 +12,8 @@ int main(int argc, char** argv) {
     int numOfPatterns;
     int numOfThreads;
     char** patterns;
+    
+    int p;
 
     // Sprawdzenie poprawnosci argumentow
     if (validateExecutionArguments(argc, argv,
@@ -21,8 +23,8 @@ int main(int argc, char** argv) {
 
     // Dodawanie wzorcow do tablicy
     patterns = (char**) malloc(sizeof (char*) * numOfPatterns);
-    for (int i = 0; i < numOfPatterns; i++) {
-        patterns[i] = argv[i + 2];
+    for (p = 0; p < numOfPatterns; p++) {
+        patterns[p] = argv[p + 2];
     }
 
     // Otwieranie pliku
@@ -57,14 +59,17 @@ int main(int argc, char** argv) {
     double completeTime;
     
     int* patternCount = (int*)malloc(sizeof(int) * numOfPatterns);
-    for (int p = 0; p < numOfPatterns; p++) {
+    for (p = 0; p < numOfPatterns; p++) {
         patternCount[p] = 0;
     }
     
     // Ustawienie ilosci watkow na ktorych dziala program
     omp_set_num_threads(numOfThreads);
  
-    for (int p = 0; p < numOfPatterns; p++) {
+    printf("\nRozpoczynam dzialanie rownolegle:\n\n");
+    
+    #pragma omp parallel for private(p) shared(patternTime) schedule(dynamic, 1)
+    for (p = 0; p < numOfPatterns; p++) {
 
         double timeStart;
         double timeFinish;
@@ -75,38 +80,37 @@ int main(int argc, char** argv) {
         n = fileLength;
         m = patternLength;
 
-        printf("--------- %s START ---------\n", patterns[p]);
-        timeStart = clock() / (CLOCKS_PER_SEC / 1000000);
+        printf("--------- %s START --------- Watek: %d \n", 
+                patterns[p], omp_get_thread_num());
+        timeStart = omp_get_wtime();
 
-        // Rownolegle wykonanie wyszukiwania wzorca
-        #pragma omp parallel for default(shared) private(i, j) schedule(dynamic, 3)
         for (i = 0; i < n - m; i++) {
             j = 0;
             while ((j < m) && (patterns[p][j] == text[i + j])) {
                 j++;
             }
             if (j == m) {
-                printf("Wzorzec: %s, Watek: %d\n", patterns[p], omp_get_thread_num());
                 patternCount[p]++;
             }
         }
 
-        timeFinish = clock() / (CLOCKS_PER_SEC / 1000000);
-        patternTime[p] = ((timeFinish - timeStart) / 1000000);
+        timeFinish = omp_get_wtime();
+        
+        patternTime[p] = timeFinish - timeStart;
 
         printf("--------- %s KONIEC ---------\n", patterns[p]);
     }
 
-    printf("\n\n\n");
+    printf("\n-----------------------------------------\n");
     
-    for (int p = 0; p < numOfPatterns; p++) {
+    for (p = 0; p < numOfPatterns; p++) {
         printf("\"%s\" count: %d\n", patterns[p], patternCount[p]);
     }
     
-    printf("\n\n");
+    printf("-----------------------------------------\n");
     
-    for (int p = 0; p < numOfPatterns; p++) {
-        printf("\"%s\" processing time: %.6lf s\n", patterns[p], patternTime[p]);
+    for (p = 0; p < numOfPatterns; p++) {
+        printf("\"%s\" processing time: %.12lf s\n", patterns[p], patternTime[p]);
         completeTime += patternTime[p];
     }
 
@@ -141,38 +145,3 @@ int validateExecutionArguments(int argc, char** argv,
 
     return (0);
 }
-
-//int find_patterns(char** words, char *pattern, int threads_count, int words_counter) {
-//    int i = 0, j, count = 0, k = 0;
-//    int n = 0; //dlugosc slowa
-//    int m = strlen(pattern); //dlugosc wzorca
-//    int pom = 0;
-//    double start, times;
-//
-//    start = omp_get_wtime();
-//    printf("\nwzorzec '%s': %d, watek %i ", pattern, m, omp_get_thread_num());
-//
-//#pragma omp parallel num_threads(threads_count) shared(m,words_counter,words,pattern)
-//    {
-//#pragma omp for private(k,i,j)  reduction(+:count)
-//        for (int k = 0; k < words_counter; k++) {
-//            printf("\nWatek nr %i, k: %d ", omp_get_num_threads(), k);
-//            n = strlen(words[k]);
-//            pom = n - m;
-//            for (i = 0; i <= pom; i++) {
-//                for (j = 0; j < m; j++) {
-//                    if (words[k][i + j] != pattern[j])
-//                        j = m + 1;
-//                }
-//                if (j == m) {
-//                    count++;
-//                    //    printf("nr %i k: %d count %d\n", omp_get_thread_num(), k, count);
-//                }
-//            }
-//        }
-//    }
-//    times = omp_get_wtime() - start;
-//    printf("Czas: %f\n ", times);
-//    printf("liczba wystapien %s w pliku : %d\n", pattern, count);
-//    return 0;
-//}

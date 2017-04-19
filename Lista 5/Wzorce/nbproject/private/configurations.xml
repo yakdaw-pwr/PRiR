@@ -30,11 +30,11 @@
           <runcommandpicklistitem>"${OUTPUT_PATH}" 3 exist ghost Hamlet 10</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" 3 exist ghost Hamlet king 2</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" 4 exist ghost Hamlet king 3</runcommandpicklistitem>
+          <runcommandpicklistitem>"${OUTPUT_PATH}" 4 exist ghost Hamlet king 1</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" 4 exist ghost Hamlet king 2</runcommandpicklistitem>
           <runcommandpicklistitem>"${OUTPUT_PATH}" 4 exist ghost Hamlet king 4</runcommandpicklistitem>
-          <runcommandpicklistitem>"${OUTPUT_PATH}" 4 exist ghost Hamlet king 1</runcommandpicklistitem>
         </runcommandpicklist>
-        <runcommand>"${OUTPUT_PATH}" 4 exist ghost Hamlet king 1</runcommand>
+        <runcommand>"${OUTPUT_PATH}" 4 exist ghost Hamlet king 4</runcommand>
         <rundir></rundir>
         <buildfirst>true</buildfirst>
         <terminal-type>0</terminal-type>
