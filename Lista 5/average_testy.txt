@@ -1,0 +1,80 @@
+[32b-g1@onyx09 Lista6]$ gcc main.c -fopenmp
+[32b-g1@onyx09 Lista6]$ ./a.out 4 ghost exist Hamlet king 1
+Podaj sciezke do pliku z tekstem: tekstDlugi
+
+-----------------------------------------
+"ghost" count: 700
+"exist" count: 4900
+"Hamlet" count: 7000
+"king" count: 2100
+-----------------------------------------
+"ghost" average processing time: 0.009378617844 s
+"exist" average processing time: 0.011565358546 s
+"Hamlet" average processing time: 0.009349112371 s
+"king" average processing time: 0.009139089324 s
+
+Average complete time: 0.039434 s
+[32b-g1@onyx09 Lista6]$ ./a.out 4 ghost exist Hamlet king 2
+Podaj sciezke do pliku z tekstem: tekstDlugi
+
+-----------------------------------------
+"ghost" count: 700
+"exist" count: 4900
+"Hamlet" count: 7000
+"king" count: 2100
+-----------------------------------------
+"ghost" average processing time: 0.009488083036 s
+"exist" average processing time: 0.011809827625 s
+"Hamlet" average processing time: 0.009608679055 s
+"king" average processing time: 0.009305469915 s
+
+Average complete time: 0.021128 s
+[32b-g1@onyx09 Lista6]$ ./a.out 4 ghost exist Hamlet king 4
+Podaj sciezke do pliku z tekstem: tekstDlugi
+
+-----------------------------------------
+"ghost" count: 700
+"exist" count: 4900
+"Hamlet" count: 7000
+"king" count: 2100
+-----------------------------------------
+"ghost" average processing time: 0.009543133359 s
+"exist" average processing time: 0.011965233851 s
+"Hamlet" average processing time: 0.009837220781 s
+"king" average processing time: 0.009462666609 s
+
+Average complete time: 0.011987 s
+[32b-g1@onyx09 Lista6]$ ./a.out 2 ghost exist 1
+Podaj sciezke do pliku z tekstem: tekstDlugi
+
+-----------------------------------------
+"ghost" count: 700
+"exist" count: 4900
+-----------------------------------------
+"ghost" average processing time: 0.009379956676 s
+"exist" average processing time: 0.011565640303 s
+
+Average complete time: 0.020947 s
+[32b-g1@onyx09 Lista6]$ ./a.out 2 ghost exist 2
+Podaj sciezke do pliku z tekstem: tekstDlugi
+
+-----------------------------------------
+"ghost" count: 700
+"exist" count: 4900
+-----------------------------------------
+"ghost" average processing time: 0.009535077955 s
+"exist" average processing time: 0.011677481877 s
+
+Average complete time: 0.011690 s
+[32b-g1@onyx09 Lista6]$ ./a.out 2 ghost exist 4
+Podaj sciezke do pliku z tekstem: tekstDlugi
+
+-----------------------------------------
+"ghost" count: 700
+"exist" count: 4900
+-----------------------------------------
+"ghost" average processing time: 0.009512380892 s
+"exist" average processing time: 0.011681005969 s
+
+Average complete time: 0.011704 s
+

@@ -1,0 +1,9 @@
+[32b-g1@onyx09 Lista6]$ ./a.out 
+Niewystarczajaca ilosc parametrow wywolania programu.
+[32b-g1@onyx09 Lista6]$ ./a.out 2 Hamlet 1
+Bledna ilosc parametrow wywolania programu.
+[32b-g1@onyx09 Lista6]$ ./a.out 2 Hamlet ghost king
+Niepoprawny ostatni parametr - liczba watkow.
+[32b-g1@onyx09 Lista6]$ ./a.out exist Hamlet ghost king 4
+Niepoprawny pierwszy parametr - liczba wzorcow.
+

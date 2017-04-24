@@ -1,0 +1,154 @@
+[32b-g1@onyx09 Lista6]$ gcc main.c -fopenmp
+
+[32b-g1@onyx09 Lista6]$ ./a.out 4 ghost exist Hamlet king 1
+Podaj sciezke do pliku z tekstem: tekstDlugi
+
+Rozpoczynam dzialanie rownolegle:
+
+--------- ghost START --------- Watek: 0 
+--------- ghost KONIEC ---------
+--------- exist START --------- Watek: 0 
+--------- exist KONIEC ---------
+--------- Hamlet START --------- Watek: 0 
+--------- Hamlet KONIEC ---------
+--------- king START --------- Watek: 0 
+--------- king KONIEC ---------
+
+-----------------------------------------
+"ghost" count: 700
+"exist" count: 4900
+"Hamlet" count: 7000
+"king" count: 2100
+-----------------------------------------
+"ghost" processing time: 0.009435537737 s
+"exist" processing time: 0.011718892027 s
+"Hamlet" processing time: 0.009358650073 s
+"king" processing time: 0.009151145816 s
+
+Complete time: 0.039664 s
+[32b-g1@onyx09 Lista6]$ ./a.out 4 ghost exist Hamlet king 2
+Podaj sciezke do pliku z tekstem: tekstDlugi
+
+Rozpoczynam dzialanie rownolegle:
+
+--------- ghost START --------- Watek: 0 
+--------- exist START --------- Watek: 1 
+--------- ghost KONIEC ---------
+--------- Hamlet START --------- Watek: 0 
+--------- exist KONIEC ---------
+--------- king START --------- Watek: 1 
+--------- Hamlet KONIEC ---------
+--------- king KONIEC ---------
+
+-----------------------------------------
+"ghost" count: 700
+"exist" count: 4900
+"Hamlet" count: 7000
+"king" count: 2100
+-----------------------------------------
+"ghost" processing time: 0.009560391307 s
+"exist" processing time: 0.011983242817 s
+"Hamlet" processing time: 0.009638623334 s
+"king" processing time: 0.009318069089 s
+
+Complete time: 0.040500 s
+[32b-g1@onyx09 Lista6]$ ./a.out 4 ghost exist Hamlet king 4
+Podaj sciezke do pliku z tekstem: tekstDlugi
+
+Rozpoczynam dzialanie rownolegle:
+
+--------- ghost START --------- Watek: 0 
+--------- Hamlet START --------- Watek: 3 
+--------- king START --------- Watek: 2 
+--------- exist START --------- Watek: 1 
+--------- king KONIEC ---------
+--------- ghost KONIEC ---------
+--------- Hamlet KONIEC ---------
+--------- exist KONIEC ---------
+
+-----------------------------------------
+"ghost" count: 700
+"exist" count: 4900
+"Hamlet" count: 7000
+"king" count: 2100
+-----------------------------------------
+"ghost" processing time: 0.009664226323 s
+"exist" processing time: 0.012223266065 s
+"Hamlet" processing time: 0.009914934170 s
+"king" processing time: 0.009514632169 s
+
+Complete time: 0.041317 s
+
+
+
+
+
+
+
+
+
+------------------------------------
+
+
+
+[32b-g1@onyx09 Lista6]$ ./a.out 2 ghost exist 1
+Podaj sciezke do pliku z tekstem: tekstDlugi
+
+Rozpoczynam dzialanie rownolegle:
+
+--------- ghost START --------- Watek: 0 
+--------- ghost KONIEC ---------
+--------- exist START --------- Watek: 0 
+--------- exist KONIEC ---------
+
+-----------------------------------------
+"ghost" count: 700
+"exist" count: 4900
+-----------------------------------------
+"ghost" processing time: 0.009445754811 s
+"exist" processing time: 0.011723543983 s
+
+Complete time: 0.021169 s
+[32b-g1@onyx09 Lista6]$ ./a.out 2 ghost exist 2
+Podaj sciezke do pliku z tekstem: tekstDlugi
+
+Rozpoczynam dzialanie rownolegle:
+
+--------- ghost START --------- Watek: 0 
+--------- exist START --------- Watek: 1 
+--------- ghost KONIEC ---------
+--------- exist KONIEC ---------
+
+-----------------------------------------
+"ghost" count: 700
+"exist" count: 4900
+-----------------------------------------
+"ghost" processing time: 0.009534556884 s
+"exist" processing time: 0.011873669922 s
+
+Complete time: 0.021408 s
+[32b-g1@onyx09 Lista6]$ ./a.out 2 ghost exist 4
+Podaj sciezke do pliku z tekstem: tekstDlugi
+
+Rozpoczynam dzialanie rownolegle:
+
+--------- ghost START --------- Watek: 0 
+--------- exist START --------- Watek: 2 
+--------- ghost KONIEC ---------
+--------- exist KONIEC ---------
+
+-----------------------------------------
+"ghost" count: 700
+"exist" count: 4900
+-----------------------------------------
+"ghost" processing time: 0.009534062818 s
+"exist" processing time: 0.011836754158 s
+
+Complete time: 0.021371 s
+
+
+
+
+
+
+
