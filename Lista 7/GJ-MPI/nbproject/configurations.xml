@@ -35,6 +35,9 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <cTool>
+          <commandlineTool>mpicc</commandlineTool>
+        </cTool>
       </compileType>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
