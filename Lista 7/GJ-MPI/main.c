@@ -24,24 +24,6 @@ void appendWithIdentityMatrix(double** matrix, int size);
 void calculateInverseMatrix(double** m, int size);
 
 int main(int argc, char** argv) {
-
-    // Inicjalizacja MPI
-    int rc = MPI_Init(&argc,&argv);
-    
-    if (rc != MPI_SUCCESS) {
-        fprintf(stderr, "Error starting MPI program.\n");
-        MPI_Abort(MPI_COMM_WORLD, rc);
-    }
-    
-    // Pobierz licze procesow
-    int worldSize;
-    MPI_Comm_size(MPI_COMM_WORLD, &worldSize);
-    printf("Processes: %d\n", worldSize);
-
-    // Identyfikator procesu
-    int worldRank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &worldRank);
-    printf("Process rank: %d\n", worldRank);
     
     // Start zliczania czasu
     double start = MPI_Wtime();
@@ -75,15 +57,74 @@ int main(int argc, char** argv) {
 
     appendWithIdentityMatrix(matrix, rowSize);
     
+    
+    
+    
+    
+    // Inicjalizacja MPI
+    int rc = MPI_Init(&argc,&argv);
+    
+    if (rc != MPI_SUCCESS) {
+        fprintf(stderr, "Error starting MPI program.\n");
+        MPI_Abort(MPI_COMM_WORLD, rc);
+    }
+    
+    // Pobierz licze procesow
+    int worldSize;
+    MPI_Comm_size(MPI_COMM_WORLD, &worldSize);
+    printf("Processes: %d\n", worldSize);
+
+    // Identyfikator procesu
+    int worldRank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &worldRank);
+    printf("Process rank: %d\n", worldRank);
+    
+    // Przypadek jeżeli ilość procesów > wielkość macierzy
+    int rowsPerProcess = 1;
+    int rowsForMaster = 0;
+    int activeProcesses = rowSize;
+    
+    if (worldSize < rowSize) {
+         rowsPerProcess = rowSize / worldSize;
+         rowsForMaster = rowSize % worldSize;
+         activeProcesses = worldSize;
+    }
+    printf("Rows per process: %d\n", rowsPerProcess);
+    printf("Rows for master process: %d\n", rowsForMaster);
+    
+    int* startRowNumber = (int*) calloc(worldSize, sizeof (int));
+    int* endRowNumber = (int*) calloc(worldSize, sizeof (int));
+    
+    int i;
+    for (i = 0; i < activeProcesses; i++) {
+        startRowNumber[i] = i * rowsPerProcess;
+        endRowNumber[i] = startRowNumber[i] + rowsPerProcess - 1;
+        
+        printf("--------------\nProcess %d\n", i);
+        printf("start: %d, end: %d\n", startRowNumber[i], endRowNumber[i]);
+        printf("--------------\n");
+    }
+    
+    int masterStartRow = 0;
+    if (rowsForMaster != 0) {
+        masterStartRow = rowSize - rowsForMaster;
+    }
+    
+    printf("Master start row: %d\n", masterStartRow);
+     
+    
+    
+    
+    
     calculateInverseMatrix(matrix, rowSize);
 
-    int i, j;
-    for (i = 0; i < rowSize; i++) {
-        for (j = 0; j < rowSize * 2; j++) {
-            printf("%lf\t", matrix[i][j]);
-        }
-        printf("\n");
-    }
+    int j;
+//    for (i = 0; i < rowSize; i++) {
+//        for (j = 0; j < rowSize; j++) {
+//            printf("%lf\t", matrix[i][j+rowSize]);
+//        }
+//        printf("\n");
+//    }
 
 
 
@@ -157,20 +198,24 @@ void appendWithIdentityMatrix(double** matrix, int size) {
 }
 
 void calculateInverseMatrix(double** m, int size) {
-    int i,j,k;
-    
-    for (k = 0; k < size; k++)
-        // k=nr wiersza
-    {
+    int i, j, k;
+
+    // k = nr wiersza
+    for (k = 0; k < size; k++) {
         // normalizacja wiersza
-        for (j = size * 2 - 1; j >= k; j--) // j=nr kolumny
+        // j = nr kolumny
+        for (j = size * 2 - 1; j >= k; j--) {
             m[k][j] = m[k][j] / m[k][k];
+        }
+
         // usuwanie zer poza przekatna
-        for (i = 0; i < size; i++)
-            // i=nr wiersza
-            if (i != k)
+        for (i = 0; i < size; i++) {
+            // i = nr wiersza
+            if (i != k) {
+                // j = nr kolumny
                 for (j = size * 2 - 1; j >= k; j--)
-                    // j=nr kolumny
                     m[i][j] = m[i][j] - m[i][k] * m[k][j];
+            }
+        }
     }
 }
