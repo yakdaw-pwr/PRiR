@@ -21,9 +21,28 @@ int checkIfFileIsReadable(char* filePath);
 double** loadMatrix(const char* filePath, int* rowSize);
 double calculateMatrixDeterminant(double** matrix);
 void appendWithIdentityMatrix(double** matrix, int size);
+void calculateInverseMatrix(double** m, int size);
 
 int main(int argc, char** argv) {
 
+    // Inicjalizacja MPI
+    int rc = MPI_Init(&argc,&argv);
+    
+    if (rc != MPI_SUCCESS) {
+        fprintf(stderr, "Error starting MPI program.\n");
+        MPI_Abort(MPI_COMM_WORLD, rc);
+    }
+    
+    // Pobierz licze procesow
+    int worldSize;
+    MPI_Comm_size(MPI_COMM_WORLD, &worldSize);
+    printf("Processes: %d\n", worldSize);
+
+    // Identyfikator procesu
+    int worldRank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &worldRank);
+    printf("Process rank: %d\n", worldRank);
+    
     // Start zliczania czasu
     double start = MPI_Wtime();
 
@@ -55,6 +74,8 @@ int main(int argc, char** argv) {
     printf("determinant : %lf\n", determinant);
 
     appendWithIdentityMatrix(matrix, rowSize);
+    
+    calculateInverseMatrix(matrix, rowSize);
 
     int i, j;
     for (i = 0; i < rowSize; i++) {
@@ -67,6 +88,8 @@ int main(int argc, char** argv) {
 
 
     //    double stop = MPI_Wtime();
+    
+    MPI_Finalize();
 
     return (EXIT_SUCCESS);
 }
@@ -130,5 +153,24 @@ void appendWithIdentityMatrix(double** matrix, int size) {
     int i;
     for (i = 0; i < size; i++) {
         matrix[i][i + size] = 1;
+    }
+}
+
+void calculateInverseMatrix(double** m, int size) {
+    int i,j,k;
+    
+    for (k = 0; k < size; k++)
+        // k=nr wiersza
+    {
+        // normalizacja wiersza
+        for (j = size * 2 - 1; j >= k; j--) // j=nr kolumny
+            m[k][j] = m[k][j] / m[k][k];
+        // usuwanie zer poza przekatna
+        for (i = 0; i < size; i++)
+            // i=nr wiersza
+            if (i != k)
+                for (j = size * 2 - 1; j >= k; j--)
+                    // j=nr kolumny
+                    m[i][j] = m[i][j] - m[i][k] * m[k][j];
     }
 }
