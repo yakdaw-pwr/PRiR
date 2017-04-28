@@ -23,6 +23,8 @@ double calculateMatrixDeterminant(double** matrix);
 void appendWithIdentityMatrix(double** matrix, int size);
 void calculateInverseMatrix(double** m, int size);
 
+double** MultiplyMatrixes(double** m1, double** m2);
+
 int main(int argc, char** argv) {
 
     int worldRank;
@@ -198,7 +200,10 @@ int main(int argc, char** argv) {
             printf("\n");
         }
         
+        // Sprawdzenie wyników
+        double** inverseResult = getInverseMatrix(rowSize, matrix);
         
+        double** multiplicityResult = MultiplyMatrixes(originalMatrix, inverseResult)
     }
     // Dla procesów wykonawczych
     else {
@@ -296,6 +301,28 @@ double** loadMatrix(const char* filePath, int* rowSize) {
 
     fclose(data);
     return matrix;
+}
+
+double** getInverseMatrix(int rowSize, double** extendedMatrix) {
+    double** matrix = (double**) calloc(rowSize, sizeof (double*));
+
+    int i;
+    for (i = 0; i < rowSize; i++) {
+        matrix[i] = (double*) calloc(rowSize, sizeof (double));
+    }
+    
+    int j;
+    for (i = 0; i < rowSize; i++) {
+        for (j = 0; j < rowSize; j++) {
+            matrix[i][j] = extendedMatrix[i][j + rowSize];               
+        }
+    }
+    
+    return matrix;
+}
+
+double** MultiplyMatrixes(double** m1, double** m2) {
+    
 }
 
 double calculateMatrixDeterminant(double** m) {
