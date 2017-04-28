@@ -123,11 +123,10 @@ int main(int argc, char** argv) {
             // Tymczasowe testy
             // *(*(data + i) + j) data[i][j]
 //            MPI_Send(startRowNumbers + 1, 3, MPI_INT, 1, 10, MPI_COMM_WORLD);
-            MPI_Send(*(matrix + 3) + 1, 3, MPI_DOUBLE, 1, 10, MPI_COMM_WORLD);
-                        
-            
+//            MPI_Send(*(matrix + 3) + 1, 3, MPI_DOUBLE, 1, 10, MPI_COMM_WORLD);    -- tutaj z macierza
 
             int j, k;
+            int p, q;
 
             // Pętla główna (k = 0, ..., N-1)
             for (k = 0; k < rowSize; k++) {
@@ -136,99 +135,113 @@ int main(int argc, char** argv) {
                     matrix[k][j] = matrix[k][j] / matrix[k][k];
                 }
 
-                // Wysłać do wykonawców [k][k+1] -> [k][2N -1]
-                for (i = 1; i < activeProcesses; i++) {
-//                    MPI_Send(, 1, MPI_INT, i, 10, MPI_COMM_WORLD);
-//                    MPI_Send(&rowSize, 1, MPI_INT, i, 1, MPI_COMM_WORLD);
-//                    MPI_Send(&startRowNumbers[i], 1, MPI_INT, i, 2, MPI_COMM_WORLD);
-//                    MPI_Send(&endRowNumbers[i], 1, MPI_INT, i, 3, MPI_COMM_WORLD);
+                for (p = 1; p < activeProcesses; p++) {
+                    // Wysłać do wykonawców [k][k+1] -> [k][2N -1]
+                    MPI_Send(*(matrix + k) + k, 2 * rowSize - k, MPI_DOUBLE, p, 10, MPI_COMM_WORLD);
+                    
+                    // Wysłać do wykonawców [poczatek -> koniec][k+1] -> [p -> k][2n-1] 
+                    for (q = startRowNumbers[p]; q <= endRowNumbers[p]; q++) {
+                        MPI_Send(*(matrix + q) + k, 2 * rowSize - k, MPI_DOUBLE, p, 10 + q, MPI_COMM_WORLD);
+                    }
                 }
-               
-
-                // Wysłać do wykonawców [poczatek -> koniec][k+1] -> [p -> k][2n-1] 
-                
-                // Zerowanie dla #0
+                            
+                // Zerowanie dla #0 bez nadmiarowego
+                // Usuwanie zer poza przekatna, i - wiersz, j - kolumna
+                for (i = startRowNumbers[0]; i <= endRowNumbers[0]; i++) {
+                    if (i != k) {
+                        for (j = rowSize * 2 - 1; j > k; j--) {
+                            matrix[i][j] = matrix[i][j] - matrix[i][k] * matrix[k][j];
+                        }
+                    }
+                }
 
                 // Odbieranie wyników i aktualizacja macierzy
+                for (p = 1; p < activeProcesses; p++) {                 
+                    for (q = startRowNumbers[p]; q <= endRowNumbers[p]; q++) {
+                        MPI_Recv(*(matrix + q) + k, 2 * rowSize - k, MPI_DOUBLE, p, 10 + q, MPI_COMM_WORLD, &status);
+                    }
+                }
 
                 // Zerowanie w niepełnym bloku
-
-                //            // usuwanie zer poza przekatna
-                //            for (i = 0; i < rowSize; i++) {
-                //                // i = nr wiersza
-                //                if (i != k) {
-                //                    // j = nr kolumny
-                //                    for (j = rowSize * 2 - 1; j >= k; j--)
-                //                        matrix[i][j] = matrix[i][j] - matrix[i][k] * matrix[k][j];
-                //                }
-                //            }
-
-
+                if (masterStartRow != 0) {
+                    for (i = masterStartRow; i < rowSize; i++) {
+                        if (i != k) {
+                            for (j = rowSize * 2 - 1; j > k; j--) {
+                                matrix[i][j] = matrix[i][j] - matrix[i][k] * matrix[k][j];
+                            }
+                        }
+                    }
+                }
             }
 
             // Czekaj na komunikaty    
         }
 
+        printf("\n\n\n\n\n");
 
-
+        int i, j;
         // Wyprowadz wyniki odwracania macierzy
-//        int i, j;
-//        for (i = 0; i < rowSize; i++) {
-//            for (j = 0; j < rowSize; j++) {
-//                printf("%lf\t", matrix[i][j + rowSize]);
-//            }
-//            printf("\n");
-//        }
+        for (i = 0; i < rowSize; i++) {
+            for (j = 0; j < rowSize; j++) {
+                printf("%.5lf\t", matrix[i][j + rowSize]);
+            }
+            printf("\n");
+        }
     }
-        // Dla procesów wykonawczych
+    // Dla procesów wykonawczych
     else {
 
         int startRowNumber;
         int endRowNumber;
+        int q, j;
+        
+        int k = 0;
 
-        printf("-----------------------");
-        printf("Proces %d: czekam, obecnie %d\n", worldRank, rowSize);
+//        printf("-----------------------");
+//        printf("Proces %d: czekam, obecnie %d\n", worldRank, rowSize);
 
         MPI_Recv(&rowSize, 1, MPI_INT, 0, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&startRowNumber, 1, MPI_INT, 0, 2, MPI_COMM_WORLD, &status);
         MPI_Recv(&endRowNumber, 1, MPI_INT, 0, 3, MPI_COMM_WORLD, &status);
 
-        printf("Proces %d: doszlo, obecnie %d\n", worldRank, rowSize);
-        printf("Proces %d: start, obecnie %d\n", worldRank, startRowNumber);
-        printf("Proces %d: end, obecnie %d\n", worldRank, endRowNumber);
-        printf("-----------------------");
+//        printf("Proces %d: doszlo, obecnie %d\n", worldRank, rowSize);
+//        printf("Proces %d: start, obecnie %d\n", worldRank, startRowNumber);
+//        printf("Proces %d: end, obecnie %d\n", worldRank, endRowNumber);
+//        printf("-----------------------");
         
         double* normalizedRow = (double*) calloc(rowSize * 2, sizeof (double));
         double* tempRow = (double*) calloc(rowSize * 2, sizeof (double));
         
-//        int* blow = (int*) calloc(rowSize * 2, sizeof (int));
-        
         // Testy
+//        int* blow = (int*) calloc(rowSize * 2, sizeof (int));
 //        MPI_Recv(blow, 3, MPI_INT, 0, 10, MPI_COMM_WORLD, &status);
-        MPI_Recv(normalizedRow, 3, MPI_DOUBLE, 0, 10, MPI_COMM_WORLD, &status);
-        
-        int i;
-        printf("Wiersz:\n");
-        for (i = 0; i < 5; i++) {
-            printf("%lf\t", normalizedRow[i]);
+//        MPI_Recv(normalizedRow, 3, MPI_DOUBLE, 0, 10, MPI_COMM_WORLD, &status);
+
+        while (1) {
+            MPI_Recv(normalizedRow, rowSize * 2 - k, MPI_DOUBLE, 0, 10, MPI_COMM_WORLD, &status);
+
+//            printf("Proces %d: Dostalem znormalizowany\n", worldRank);
+
+            for (q = startRowNumber; q <= endRowNumber; q++) {
+                MPI_Recv(tempRow, rowSize * 2 - k, MPI_DOUBLE, 0, 10 + q, MPI_COMM_WORLD, &status);
+//                printf("Proces %d: Dostalem moj\n", worldRank);
+                if (q != k) {
+                    for (j = rowSize * 2 - 1; j >= 0; j--) {
+                        tempRow[j] = tempRow[j] - tempRow[0] * normalizedRow[j];
+                    }
+                }
+//                printf("Proces %d: Przetworzylem moj\n", worldRank);
+
+
+                // Zwroc prawe czesci swoich wierszow
+                MPI_Send(tempRow, rowSize * 2 - k, MPI_DOUBLE, 0, 10 + q, MPI_COMM_WORLD);
+
+//                printf("Proces %d: Wyslalem moj\n", worldRank);
+            }
+
+            // Zmniejsz bufor
+            k++;
         }
-        printf("\n");
-
-        // Odbierz [k][k+1] -> [k][2N -1]
-
-        // Odbierz [poczatek -> koniec][k+1] -> [p -> k][2n-1]
-
-
-        //        for (i = 0; i < rowSize; i++) {
-        //                // i = nr wiersza
-        //                if (i != k) {
-        //                    // j = nr kolumny
-        //                    for (j = rowSize * 2 - 1; j >= k; j--)
-        //                        matrix[i][j] = matrix[i][j] - matrix[i][k] * matrix[k][j];
-        //                }
-        //        }
-
-        // Zwroc prawe czesci swoich wierszow
     }
 
 
