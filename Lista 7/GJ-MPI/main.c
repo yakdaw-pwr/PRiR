@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <mpi.h>
 
 int validateExecutionArguments(int argc);
@@ -21,9 +22,12 @@ int checkIfFileIsReadable(char* filePath);
 double** loadMatrix(const char* filePath, int* rowSize);
 double calculateMatrixDeterminant(double** matrix);
 void appendWithIdentityMatrix(double** matrix, int size);
+
 void calculateInverseMatrix(double** m, int size);
 
-double** MultiplyMatrixes(double** m1, double** m2);
+double** getInverseMatrix(int rowSize, double** extendedMatrix);
+double** MultiplyMatrixes(int rowSize, double** m1, double** m2);
+//double** copyMatrix(double** matrix, int rowSize);
 
 int main(int argc, char** argv) {
 
@@ -31,6 +35,8 @@ int main(int argc, char** argv) {
     int rowSize = 0;
     
     double timeStart;
+    
+    double** originalMatrix;
 
     // Inicjalizacja MPI
     MPI_Status status;
@@ -64,6 +70,7 @@ int main(int argc, char** argv) {
 
         // Wczytanie macierzy z pliku
         double** matrix = loadMatrix(filePath, &rowSize);
+        originalMatrix = loadMatrix(filePath, &rowSize);
         printf("Row size: %d\n", rowSize);
 
         // Oblicz wyznacznik
@@ -190,20 +197,28 @@ int main(int argc, char** argv) {
         printf("Czas wykonywania operacji: %f\n\n", MPI_Wtime() - timeStart);
 
         // Wyniki odwracania macierzy
-        printf("Odwrocona macierz:\n\n");
+        double** inverseResult = getInverseMatrix(rowSize, matrix);      
+        printf("Odwrocona macierz:\n");
 
         int i, j;
         for (i = 0; i < rowSize; i++) {
             for (j = 0; j < rowSize; j++) {
-                printf("%lf\t", matrix[i][j + rowSize]);
+                printf("%lf\t", inverseResult[i][j]);
             }
             printf("\n");
         }
         
-        // Sprawdzenie wyników
-        double** inverseResult = getInverseMatrix(rowSize, matrix);
+        printf("\nSprawdzenie wynikow: \n");
         
-        double** multiplicityResult = MultiplyMatrixes(originalMatrix, inverseResult)
+        // Sprawdzenie wyników
+        double** multiplicityResult = MultiplyMatrixes(rowSize, originalMatrix, inverseResult);
+        
+        for (i = 0; i < rowSize; i++) {
+            for (j = 0; j < rowSize; j++) {
+                printf("%lf\t", multiplicityResult[i][j]);
+            }
+            printf("\n");
+        }
     }
     // Dla procesów wykonawczych
     else {
@@ -321,8 +336,25 @@ double** getInverseMatrix(int rowSize, double** extendedMatrix) {
     return matrix;
 }
 
-double** MultiplyMatrixes(double** m1, double** m2) {
-    
+double** MultiplyMatrixes(int rowSize, double** m1, double** m2) {
+    double** matrix = (double**) calloc(rowSize, sizeof (double*));
+
+    int i;
+    for (i = 0; i < rowSize; i++) {
+        matrix[i] = (double*) calloc(rowSize, sizeof (double));
+    }
+
+    int j, k;
+    for (int i = 0; i < rowSize; i++) {
+        for (int j = 0; j < rowSize; j++) {
+            matrix[i][j] = 0;
+            for (int k = 0; k < rowSize; k++) {
+                matrix[i][j] = matrix[i][j] + m1[i][k] * m2[k][j];
+            }
+        }
+    }
+
+    return matrix;
 }
 
 double calculateMatrixDeterminant(double** m) {
