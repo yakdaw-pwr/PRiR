@@ -25,11 +25,10 @@ void calculateInverseMatrix(double** m, int size);
 
 int main(int argc, char** argv) {
 
-    // Tags: 1 - matrixSize , 2 - startRowNum , 3 - endRowNum
-
     int worldRank;
-
     int rowSize = 0;
+    
+    double timeStart;
 
     // Inicjalizacja MPI
     MPI_Status status;
@@ -63,17 +62,18 @@ int main(int argc, char** argv) {
 
         // Wczytanie macierzy z pliku
         double** matrix = loadMatrix(filePath, &rowSize);
-
         printf("Row size: %d\n", rowSize);
 
+        // Oblicz wyznacznik
         double determinant = calculateMatrixDeterminant(matrix);
         if (determinant == 0) {
             fprintf(stderr, "Wczytana macierz jest osobliwa (wyznacznik = 0).\n");
             MPI_Abort(MPI_COMM_WORLD, rc);
             return (1);
         }
-        printf("determinant : %lf\n", determinant);
+        printf("Matrix determinant: %lf\n", determinant);
 
+        // Poszerz macierz o macierz jednostkowa
         appendWithIdentityMatrix(matrix, rowSize);
 
         // Pobierz licze procesow
@@ -81,72 +81,77 @@ int main(int argc, char** argv) {
         MPI_Comm_size(MPI_COMM_WORLD, &worldSize);
         printf("Processes: %d\n", worldSize);
 
-        // Jest tylko proces master -> wykonaj algorytm sam
+        // Jest tylko proces master -> wykonaj pojedynczy algorytm
         if (worldSize == 1) {
+            // Rozpoczecie mierzenia czasu
+            timeStart = MPI_Wtime();
+            
             calculateInverseMatrix(matrix, rowSize);
-        } else {
-            // Domyslny przypadek jeżeli ilość procesów > wielkość macierzy
+        } 
+        else {          
             int rowsPerProcess = 1;
             int rowsForMaster = 0;
             int activeProcesses = rowSize;
 
+            // Jeżeli liczba procesow >= wielkosci macierzy,
+            // zostaw domyslne wartosci
             if (worldSize < rowSize) {
                 rowsPerProcess = rowSize / worldSize;
                 rowsForMaster = rowSize % worldSize;
                 activeProcesses = worldSize;
             }
             printf("Rows per process: %d\n", rowsPerProcess);
-            printf("Rows for master process: %d\n", rowsForMaster);
+            printf("Smaller block rows (for master process): %d\n", rowsForMaster);
 
             int* startRowNumbers = (int*) calloc(worldSize, sizeof (int));
             int* endRowNumbers = (int*) calloc(worldSize, sizeof (int));
 
+            // Wylicz wiersze startowe i koncowe blokow dla poszczegolnych procesow
             int i;
             for (i = 0; i < activeProcesses; i++) {
                 startRowNumbers[i] = i * rowsPerProcess;
                 endRowNumbers[i] = startRowNumbers[i] + rowsPerProcess - 1;
             }
 
+            // Wylicz wiersz startowy mniejszego bloku (jezeli istnieje)
             int masterStartRow = 0;
             if (rowsForMaster != 0) {
                 masterStartRow = rowSize - rowsForMaster;
             }
 
-            printf("Master start row: %d\n", masterStartRow);
-
+            // Wyslij procesom wykonawczym informacje o wielkosci macierzy,
+            // poczatku i koncu blokow
             for (i = 1; i < activeProcesses; i++) {
                 MPI_Send(&rowSize, 1, MPI_INT, i, 1, MPI_COMM_WORLD);
                 MPI_Send(&startRowNumbers[i], 1, MPI_INT, i, 2, MPI_COMM_WORLD);
                 MPI_Send(&endRowNumbers[i], 1, MPI_INT, i, 3, MPI_COMM_WORLD);
             }
             
-            // Tymczasowe testy
-            // *(*(data + i) + j) data[i][j]
-//            MPI_Send(startRowNumbers + 1, 3, MPI_INT, 1, 10, MPI_COMM_WORLD);
-//            MPI_Send(*(matrix + 3) + 1, 3, MPI_DOUBLE, 1, 10, MPI_COMM_WORLD);    -- tutaj z macierza
-
             int j, k;
             int p, q;
+            
+            timeStart = MPI_Wtime();
 
-            // Pętla główna (k = 0, ..., N-1)
+            // Petla glowna (k = 0, ..., N-1)
             for (k = 0; k < rowSize; k++) {
+                
                 // Normalizacja wiersza
                 for (j = rowSize * 2 - 1; j >= k; j--) {
                     matrix[k][j] = matrix[k][j] / matrix[k][k];
                 }
 
+                // Wysylanie wiadomosci do procesow wykonawczych
                 for (p = 1; p < activeProcesses; p++) {
-                    // Wysłać do wykonawców [k][k+1] -> [k][2N -1]
+                    // Wyslij prawa czesc znormalizowanego wiersza k
                     MPI_Send(*(matrix + k) + k, 2 * rowSize - k, MPI_DOUBLE, p, 10, MPI_COMM_WORLD);
                     
-                    // Wysłać do wykonawców [poczatek -> koniec][k+1] -> [p -> k][2n-1] 
+                    // Wyslij prawa czesc wierszy dla danego procesu
                     for (q = startRowNumbers[p]; q <= endRowNumbers[p]; q++) {
                         MPI_Send(*(matrix + q) + k, 2 * rowSize - k, MPI_DOUBLE, p, 10 + q, MPI_COMM_WORLD);
                     }
                 }
                             
-                // Zerowanie dla #0 bez nadmiarowego
-                // Usuwanie zer poza przekatna, i - wiersz, j - kolumna
+                // Zerowanie dla pierwszego bloku wykonywane przez master (proces 0)
                 for (i = startRowNumbers[0]; i <= endRowNumbers[0]; i++) {
                     if (i != k) {
                         for (j = rowSize * 2 - 1; j > k; j--) {
@@ -155,14 +160,14 @@ int main(int argc, char** argv) {
                     }
                 }
 
-                // Odbieranie wyników i aktualizacja macierzy
+                // Odbieranie wynikow z procesow wykonawczych i aktualizacja macierzy
                 for (p = 1; p < activeProcesses; p++) {                 
                     for (q = startRowNumbers[p]; q <= endRowNumbers[p]; q++) {
                         MPI_Recv(*(matrix + q) + k, 2 * rowSize - k, MPI_DOUBLE, p, 10 + q, MPI_COMM_WORLD, &status);
                     }
                 }
 
-                // Zerowanie w niepełnym bloku
+                // Zerowanie dla bloku niepelnego
                 if (masterStartRow != 0) {
                     for (i = masterStartRow; i < rowSize; i++) {
                         if (i != k) {
@@ -174,19 +179,26 @@ int main(int argc, char** argv) {
                 }
             }
 
-            // Czekaj na komunikaty    
+            // Budowa programu zaklada ze wszystkie komunikaty doszly   
         }
+           
+        printf("\n\n\n");
+        
+        // Czas wykonywania operacji
+        printf("Czas wykonywania operacji: %f\n\n", MPI_Wtime() - timeStart);
 
-        printf("\n\n\n\n\n");
+        // Wyniki odwracania macierzy
+        printf("Odwrocona macierz:\n\n");
 
         int i, j;
-        // Wyprowadz wyniki odwracania macierzy
         for (i = 0; i < rowSize; i++) {
             for (j = 0; j < rowSize; j++) {
-                printf("%.5lf\t", matrix[i][j + rowSize]);
+                printf("%lf\t", matrix[i][j + rowSize]);
             }
             printf("\n");
         }
+        
+        
     }
     // Dla procesów wykonawczych
     else {
@@ -195,59 +207,44 @@ int main(int argc, char** argv) {
         int endRowNumber;
         int q, j;
         
+        // Normalizowany wiersz
         int k = 0;
 
-//        printf("-----------------------");
-//        printf("Proces %d: czekam, obecnie %d\n", worldRank, rowSize);
-
+        // Odbierz informacje o wielkosci macierzy, wierszu poczatkowym i koncowym
         MPI_Recv(&rowSize, 1, MPI_INT, 0, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&startRowNumber, 1, MPI_INT, 0, 2, MPI_COMM_WORLD, &status);
         MPI_Recv(&endRowNumber, 1, MPI_INT, 0, 3, MPI_COMM_WORLD, &status);
-
-//        printf("Proces %d: doszlo, obecnie %d\n", worldRank, rowSize);
-//        printf("Proces %d: start, obecnie %d\n", worldRank, startRowNumber);
-//        printf("Proces %d: end, obecnie %d\n", worldRank, endRowNumber);
-//        printf("-----------------------");
         
+        // Zalokuj pamiec dla wiersza znormalizowanego
+        // i wiersza nalezacego do bloku
         double* normalizedRow = (double*) calloc(rowSize * 2, sizeof (double));
         double* tempRow = (double*) calloc(rowSize * 2, sizeof (double));
-        
-        // Testy
-//        int* blow = (int*) calloc(rowSize * 2, sizeof (int));
-//        MPI_Recv(blow, 3, MPI_INT, 0, 10, MPI_COMM_WORLD, &status);
-//        MPI_Recv(normalizedRow, 3, MPI_DOUBLE, 0, 10, MPI_COMM_WORLD, &status);
 
-        while (1) {
+        // Nasluchuj od MASTERA
+        while (k < rowSize) {
+            // Odbierz prawa strone wiersza znormalizowanego
             MPI_Recv(normalizedRow, rowSize * 2 - k, MPI_DOUBLE, 0, 10, MPI_COMM_WORLD, &status);
 
-//            printf("Proces %d: Dostalem znormalizowany\n", worldRank);
-
+            // Dla kazdego wiersza w przypisanym bloku
             for (q = startRowNumber; q <= endRowNumber; q++) {
+                
+                // Odbierz prawa strone wiersza
                 MPI_Recv(tempRow, rowSize * 2 - k, MPI_DOUBLE, 0, 10 + q, MPI_COMM_WORLD, &status);
-//                printf("Proces %d: Dostalem moj\n", worldRank);
+
+                // Wykonaj zerowanie
                 if (q != k) {
                     for (j = rowSize * 2 - 1; j >= 0; j--) {
                         tempRow[j] = tempRow[j] - tempRow[0] * normalizedRow[j];
                     }
                 }
-//                printf("Proces %d: Przetworzylem moj\n", worldRank);
 
-
-                // Zwroc prawe czesci swoich wierszow
+                // Wyslij przetworzony wiersz do MASTERA
                 MPI_Send(tempRow, rowSize * 2 - k, MPI_DOUBLE, 0, 10 + q, MPI_COMM_WORLD);
-
-//                printf("Proces %d: Wyslalem moj\n", worldRank);
             }
 
-            // Zmniejsz bufor
             k++;
         }
     }
-
-
-    //    double start = MPI_Wtime();
-
-    //    double stop = MPI_Wtime();
 
     MPI_Finalize();
 
@@ -277,7 +274,7 @@ double** loadMatrix(const char* filePath, int* rowSize) {
     FILE* data = fopen(filePath, "r");
     double matrixAgrument = 0;
 
-    // Skanuj wielkość macierzy odwracanej
+    // Skanuj wielkosc macierzy odwracanej
     int tempMemory = 0;
     fscanf(data, "%d", &tempMemory);
     *rowSize = tempMemory;
