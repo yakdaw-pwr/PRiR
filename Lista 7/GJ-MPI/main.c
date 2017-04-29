@@ -208,7 +208,7 @@ int main(int argc, char** argv) {
             printf("\n");
         }
         
-        printf("\nSprawdzenie wynikow: \n");
+        printf("\nSprawdzenie wynikow (oryginal * odwrotna):\n");
         
         // Sprawdzenie wyników
         double** multiplicityResult = MultiplyMatrixes(rowSize, originalMatrix, inverseResult);
@@ -345,10 +345,10 @@ double** MultiplyMatrixes(int rowSize, double** m1, double** m2) {
     }
 
     int j, k;
-    for (int i = 0; i < rowSize; i++) {
-        for (int j = 0; j < rowSize; j++) {
+    for (i = 0; i < rowSize; i++) {
+        for (j = 0; j < rowSize; j++) {
             matrix[i][j] = 0;
-            for (int k = 0; k < rowSize; k++) {
+            for (k = 0; k < rowSize; k++) {
                 matrix[i][j] = matrix[i][j] + m1[i][k] * m2[k][j];
             }
         }
