@@ -14,7 +14,7 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc
+CC=mpicc
 CCC=g++
 CXX=g++
 FC=gfortran
@@ -52,7 +52,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=
+LDLIBSOPTIONS=-lcrypt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
