@@ -30,14 +30,12 @@ int main(int argc, char** argv) {
     double timeStart;
     int i;
     
-    const int maxPasswordsFound = 1;
+    const int maxPasswordsFound = 50;
     int passwordsFound;
     
     // Wszystkie mozliwe znaki
-    const char* characters = "!\"#$%&'()*+,-./0123456789:;<=>?"
-        "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
-        "`abcdefghijklmnopqrstuvwxyz{|}~";
-    
+    const char* characters = "0123456789"; 
+   
     // Inicjalizacja MPI
     MPI_Status status;
     int rc = MPI_Init(&argc, &argv);
