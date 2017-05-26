@@ -23,6 +23,7 @@ int* generateSeries(int size);
 int uniformDistribution(int rangeLow, int rangeHigh);
 void oddEvenSort(int *series, int seriesSize);
 void swap(int *x, int *y);
+void removeFileIfExists(char* fileName);
 
 int main(int argc, char** argv) {
 
@@ -53,7 +54,9 @@ int main(int argc, char** argv) {
         int seriesSize;
         int report;
         int* series;
-
+        
+        char* fileName = "OEpS.lst";
+        
         // Sprawdzenie poprawnosci argumentow
         if (validateExecutionArguments(argc, argv, &seriesSize,
                 &report, worldSize) == 1) {
@@ -65,23 +68,49 @@ int main(int argc, char** argv) {
         series = generateSeries(seriesSize);
         
         if (report) {
-            printf("Generated series: %d\n", seriesSize);
+            printf("Generated series (%d):\n", seriesSize);
             for (i = 0; i < seriesSize; i++) {
                 printf("%d ", series[i]);
             }
-            printf("\n");
+            printf("\n\n");
         }
+        
+        // Tworzenie nowego pliku raportu
+        removeFileIfExists(fileName);
+        FILE* pFile = fopen(fileName, "a");
+        fprintf(pFile, "%d\n", seriesSize);
+
+        for (i = 0; i < seriesSize; i++) {
+            fprintf(pFile, "%d", series[i]);
+            if (i != seriesSize - 1) {
+                fprintf(pFile, "\t");
+            }
+        }
+        fprintf(pFile, "\n");
+        
 
         if (worldSize == 1) {
+            timeStart = MPI_Wtime();
+            
             oddEvenSort(series, seriesSize);
+            
+            printf("\nTIME TO SORT SERIES: %lf\n\n", MPI_Wtime() - timeStart);
 
             if (report) {
-                printf("Sorted series: %d\n", seriesSize);
+                printf("Sorted series (%d):\n", seriesSize);
                 for (i = 0; i < seriesSize; i++) {
                     printf("%d ", series[i]);
                 }
                 printf("\n");
             }
+            
+            for (i = 0; i < seriesSize; i++) {
+                fprintf(pFile, "%d", series[i]);
+                if (i != seriesSize - 1) {
+                    fprintf(pFile, "\t");
+                }
+            }
+            fprintf(pFile, "\n");
         } 
         else {            
             int* startIndexes = (int*) calloc(worldSize, sizeof (int));
@@ -114,8 +143,10 @@ int main(int argc, char** argv) {
             
             int* result = (int*) calloc(seriesSize, sizeof (int));
             int stop = 0;
+            
+            timeStart = MPI_Wtime();
 
-            for (i = 0; i < worldSize; i++) { // Do zmiany
+            for (i = 0; i < worldSize; i++) {
                 
                 // Parzyste
                 if (i % 2 == 0) {
@@ -144,24 +175,39 @@ int main(int argc, char** argv) {
 
                 if (report == 1) {
                     int k;
+                    printf("Step %d result: \n", i);
                     for (j = 0; j < seriesSize; j = j + partSize) {
                         for (k = 0; k < partSize; k++) {
                             printf("%d ", result[j + k]);                        
                         }
                         printf("\t");
                     }
-                    printf("\n\n\n");    
+                    printf("\n\n");    
                 }
-                
-                
+                         
                 for (p = 1; p < worldSize; p++) {
                     MPI_Send(&stop, 1, MPI_INT, p, 6, MPI_COMM_WORLD);  
                 }
             }
-           
+            
+            printf("\nTIME TO SORT SERIES: %lf\n\n", MPI_Wtime() - timeStart);
+            
+            if (report) {
+                printf("Sorted series (%d):\n", seriesSize);
+                for (i = 0; i < seriesSize; i++) {
+                    printf("%d ", result[i]);
+                }
+                printf("\n");
+            }
+
+            for (i = 0; i < seriesSize; i++) {
+                fprintf(pFile, "%d", result[i]);
+                if (i != seriesSize - 1) {
+                    fprintf(pFile, "\t");
+                }
+            }
+            fprintf(pFile, "\n");
         }
-
-
     }
     // Watek wykonawczy
     else {
@@ -191,10 +237,8 @@ int main(int argc, char** argv) {
         
         for (i = 0; i < worldSize; i++) {
             // Parzyste
-            if (i % 2 == 0) {
-                
-                if (even == 1) {
-                    
+            if (i % 2 == 0) {               
+                if (even == 1) {                    
                     if ( worldRank == worldSize - 1) {
 
                     }
@@ -236,8 +280,7 @@ int main(int argc, char** argv) {
             }
             // Nieparzyste
             else {
-                if (even == 0) {
-                   
+                if (even == 0) {                   
                     if ( worldRank == worldSize - 1) {
 
                     }
@@ -331,7 +374,7 @@ int* generateSeries(int size) {
     
     int i;
     for (i = 0; i < size; i++) {
-        series[i] = uniformDistribution(0, 10);
+        series[i] = uniformDistribution(100, 999);
     }
     
     return series;
@@ -376,4 +419,11 @@ void swap(int *x, int *y) {
     temp = *x;
     *x = *y;
     *y = temp; 
+}
+
+void removeFileIfExists(char* fileName) {
+
+    if (access(fileName, F_OK) != -1) {
+        int removed = remove(fileName);
+    }
 }
