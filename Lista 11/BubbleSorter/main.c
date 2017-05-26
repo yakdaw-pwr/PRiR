@@ -63,8 +63,6 @@ int main(int argc, char** argv) {
 
         // Generowanie ciągu
         series = generateSeries(seriesSize);
-//        int series[12] = {6, 5, 6, 4, 5, 10, 10, 6, 7, 1, 6, 0};
-//        int series[8] = { 3, 2, 3, 8, 5, 6, 4, 1 };
         
         if (report) {
             printf("Generated series: %d\n", seriesSize);
@@ -122,46 +120,23 @@ int main(int argc, char** argv) {
                 // Parzyste
                 if (i % 2 == 0) {
                     // Wyslij + 1
-//                    printf("%d WYSYLAM do %d\n", worldRank, worldRank + 1);
                     MPI_Send(partSeries, partSize, MPI_INT, worldRank + 1, 10 + i, MPI_COMM_WORLD);
 
                     // Odbierz + 1
-//                    printf("%d Chce odebrac od procesu %d \n", worldRank, worldRank+1);
                     MPI_Recv(neighbourSeries, partSize, MPI_INT, worldRank + 1, 10 + i, MPI_COMM_WORLD, &status);  
-//                    printf("%d ODEBRALEM z %d\n", worldRank, worldRank + 1);
 
                     // Polacz
                     memcpy(temporary, partSeries, partSize * sizeof(int));
                     memcpy(temporary + partSize, neighbourSeries, partSize * sizeof(int));
-                    
-                    printf("MASTER : ");
-                    for (j = 0; j < partSize * 2; j++) {
-                        printf("%d ", temporary[j]);
-                    }
-                    printf("\n");
 
                     // Oddsort
                     oddEvenSort(temporary, partSize * 2);
-                    
-                    printf("MASTER 2: ");
-                    for (j = 0; j < partSize * 2; j++) {
-                        printf("%d ", temporary[j]);
-                    }
-                    printf("\n");
                                                 
                     // Zostaw[0] + part
                     memcpy(partSeries, temporary, partSize * sizeof(int));
-                    
-                    printf("MASTER PART: ");
-                    for (j = 0; j < partSize; j++) {
-                        printf("%d ", partSeries[j]);
-                    }
-                    printf("\n");
                 }
                 
                 memcpy(result, partSeries, partSize * sizeof(int));
-                
-//                printf("MASTER CZEKAM NA WYNIKI\n");
 
                 for (p = 1; p < worldSize; p++) {
                     MPI_Recv(result + partSize * p, partSize, MPI_INT, p, 5, MPI_COMM_WORLD, &status);  
@@ -223,37 +198,29 @@ int main(int argc, char** argv) {
                     if ( worldRank == worldSize - 1) {
 
                     }
-                    else {
-                    //                    printf("WYKONAWCZY PARZYSTY %d Wchodze w i: %d PARZYSTE\n", worldRank, i);
-                    
-                    // Wyslij + 1
-//                    printf("%d WYSYLAM do %d\n", worldRank, worldRank + 1);
-                    MPI_Send(series, partSize, MPI_INT, worldRank + 1, 10 + i, MPI_COMM_WORLD);
-                    
-                    // Odbierz + 1
-//                    printf("%d Chce odebrac od procesu %d \n", worldRank, worldRank+1);
-                    MPI_Recv(neighbourSeries, partSize, MPI_INT, worldRank + 1, 10 + i, MPI_COMM_WORLD, &status);  
-//                    printf("%d ODEBRALEM z %d\n", worldRank, worldRank + 1);
+                    else {     
+                        // Wyslij + 1
+                        MPI_Send(series, partSize, MPI_INT, worldRank + 1, 10 + i, MPI_COMM_WORLD);
 
-                    // Polacz
-                    memcpy(temporary, series, partSize * sizeof(int));
-                    memcpy(temporary + partSize, neighbourSeries, partSize * sizeof(int));
-             
-                    // Oddsort
-                    oddEvenSort(temporary, partSize * 2);
-                    
-                    // Zostaw[0] + part
-                    memcpy(series, temporary, partSize * sizeof(int));
+                        // Odbierz + 1
+                        MPI_Recv(neighbourSeries, partSize, MPI_INT, worldRank + 1, 10 + i, MPI_COMM_WORLD, &status);  
+
+                        // Polacz
+                        memcpy(temporary, series, partSize * sizeof(int));
+                        memcpy(temporary + partSize, neighbourSeries, partSize * sizeof(int));
+
+                        // Oddsort
+                        oddEvenSort(temporary, partSize * 2);
+
+                        // Zostaw[0] + part
+                        memcpy(series, temporary, partSize * sizeof(int));
                     }
                 }
                 else {                 
                     // Odbierz - 1
-//                    printf("%d Chce odebrac od procesu %d \n", worldRank, worldRank-1);
                     MPI_Recv(neighbourSeries, partSize, MPI_INT, worldRank - 1, 10 + i, MPI_COMM_WORLD, &status);  
-//                    printf("%d ODEBRALEM z %d\n", worldRank, worldRank - 1);
                     
                     // Wyslij - 1
-//                    printf("%d WYSYLAM do %d\n", worldRank, worldRank - 1);
                     MPI_Send(series, partSize, MPI_INT, worldRank - 1, 10 + i, MPI_COMM_WORLD);
                     
                     // Polacz
@@ -266,8 +233,6 @@ int main(int argc, char** argv) {
                     // Zostaw[0] + part
                     memcpy(series, temporary + partSize, partSize * sizeof(int));
                 }
-                
-//                printf("WYKONAWCZY %d Jestem w i: %d\n", worldRank, i);
             }
             // Nieparzyste
             else {
@@ -278,13 +243,10 @@ int main(int argc, char** argv) {
                     }
                     else {
                         // Wyslij + 1
-//                        printf("%d WYSYLAM do %d\n", worldRank, worldRank + 1);
                         MPI_Send(series, partSize, MPI_INT, worldRank + 1, 10 + i, MPI_COMM_WORLD);
 
                         // Odbierz + 1
-//                        printf("%d Chce odebrac od procesu %d \n", worldRank, worldRank+1);
                         MPI_Recv(neighbourSeries, partSize, MPI_INT, worldRank + 1, 10 + i, MPI_COMM_WORLD, &status);  
-//                        printf("%d ODEBRALEM z %d\n", worldRank, worldRank + 1);
 
                         // Polacz
                         memcpy(temporary, series, partSize * sizeof(int));
@@ -298,14 +260,10 @@ int main(int argc, char** argv) {
                     }
                 }
                 else {
-//                    printf("%d Chce odebrac od procesu %d \n", worldRank, worldRank-1);
-                    
                     // Odbierz - 1
                     MPI_Recv(neighbourSeries, partSize, MPI_INT, worldRank - 1, 10 + i, MPI_COMM_WORLD, &status);  
-//                    printf("%d ODEBRALEM z %d\n", worldRank, worldRank -1);
                     
                     // Wyslij - 1
-//                    printf("%d WYSYLAM do %d\n", worldRank, worldRank - 1);
                     MPI_Send(series, partSize, MPI_INT, worldRank - 1, 10 + i, MPI_COMM_WORLD);
                     
                     // Polacz
@@ -318,11 +276,7 @@ int main(int argc, char** argv) {
                     // Zostaw[0] + part
                     memcpy(series, temporary + partSize, partSize * sizeof(int));
                 }
-                
-//                printf("WYKONAWCZY %d Jestem w i: %d\n", worldRank, i);
             }
-            
-//            printf("WYKONAWCZY %d Wysylam koniec\n", worldRank);
             
             MPI_Send(series, partSize, MPI_INT, 0, 5, MPI_COMM_WORLD);  
             MPI_Recv(&stop, 1, MPI_INT, 0, 6, MPI_COMM_WORLD, &status);  
